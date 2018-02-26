@@ -1,0 +1,24 @@
+{
+  "name": "networking-api",
+  "version": "0.0.1",
+  "description": "Networking test project API",
+  "main": "index.js",
+  "author": "Garonz",
+  "license": "MIT",
+  "scripts": {
+    "start": "node ./node_modules/nodemon/bin/nodemon index.js"
+  },
+  "dependencies": {
+    "dotenv": "^5.0.0",
+    "koa": "^2.5.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-bunyan-logger": "^2.0.0",
+    "koa-helmet": "^3.3.0",
+    "koa-router": "^7.4.0",
+    "mongoose": "^5.0.7",
+    "validator": "^9.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.15.1"
+  }
+}

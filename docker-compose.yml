@@ -1,0 +1,17 @@
+version: '3'
+services:
+  node:
+    image: node
+    depends_on:
+      - mongo
+    hostname: app
+    working_dir: /usr/src/app
+    command: npm run start
+    volumes:
+     - ./:/usr/src/app
+    ports:
+      - "3001:3000"
+  mongo:
+    image: mongo
+    volumes:
+      - ./db/mongo:/data/db
