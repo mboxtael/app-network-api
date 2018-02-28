@@ -12,6 +12,7 @@
   "dependencies": {
     "bcrypt": "^1.0.3",
     "dotenv": "^5.0.0",
+    "jsonwebtoken": "^8.1.1",
     "koa": "^2.5.0",
     "koa-bodyparser": "^4.2.0",
     "koa-bunyan-logger": "^2.0.0",
@@ -25,8 +26,5 @@
     "jest": "^22.4.2",
     "nodemon": "^1.15.1",
     "supertest": "^3.0.0"
-  },
-  "jest": {
-    "testEnvironment": "node"
   }
 }
