@@ -1,14 +1,15 @@
 exports.validationErrors = ({ errors: rawErrors }) => {
-  let errors;
-  console.log(rawErrors);
-  try {
-    errors = Object.keys(rawErrors).map(key => ({
-      attribute: rawErrors[key].path,
-      type: rawErrors[key].kind,
-      message: rawErrors[key].message
-    }));
-  } catch (error) {
-    errors = error;
+  const errors = { };
+
+  for (const key in rawErrors) {
+    if (rawErrors.hasOwnProperty(key)) {
+      const error = rawErrors[key];
+      errors[key] = {
+        type: error.kind,
+        message: error.message    
+      }
+    }
   }
+
   return errors;
 };
