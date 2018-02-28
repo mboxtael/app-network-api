@@ -23,7 +23,6 @@ describe(`POST: ${PATH}`, () => {
       expect.arrayContaining([
         'username',
         'email',
-        'password',
         'gender',
         'birthdate'
       ])
@@ -44,11 +43,11 @@ describe(`POST: ${PATH}`, () => {
 
     expect(res.status).toEqual(201);
     expect(res.type).toEqual('application/json');
-    expect(res.body.data).toMatchObject(user);
     expect(res.body.data).toEqual(
       expect.objectContaining({
         _id: expect.any(String)
       })
     );
+    expect(res.body.data).not.toHaveProperty('password');
   });
 });

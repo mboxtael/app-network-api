@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const { isEmail } = require('validator');
+const bcrypt = require('bcrypt');
 
 const userSchema = new Schema({
   username: {
@@ -19,7 +20,8 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: true
+    required: true,
+    select: false
   },
   gender: {
     type: String,
@@ -30,7 +32,18 @@ const userSchema = new Schema({
     required: true
   }
 });
+userSchema.pre('save', true, async function(next, done) {
+  next();
+  this.password = await bcrypt.hash(this.password, 8);
+  done();
+});
+userSchema.set('toObject', {
+  transform: (doc, ret, options) => {
+    delete ret.password;
+    return ret;
+  }
+});
 
-const User = mongoose.model('users', userSchema);
+const UserModel = mongoose.model('users', userSchema);
 
-module.exports = User;
+module.exports = UserModel;
