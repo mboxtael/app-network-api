@@ -1,19 +1,15 @@
 const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
-const path = require('path');
-const fs = require('fs');
+require('dotenv').config();
 
 const app = new Koa();
 app.use(bodyParser());
 
-fs.readdirSync('./app/components').forEach(component => {
-  if (
-    fs.existsSync(path.join('./app/components', component, 'controller.js'))
-  ) {
-    const controller = require(`../app/components/${component}/controller.js`);
-    app.use(controller.routes());
-  }
-});
+const users = require('../app/components/users/controller');
+const auth = require('../app/components/auth/authController');
+
+app.use(users.routes());
+app.use(auth.routes());
 
 const server = app.listen(process.env.PORT || 3000);
 

@@ -15,13 +15,14 @@ afterEach(() => {
 
 describe(`POST: ${PATH}`, () => {
   it('should return a valid access token', async () => {
-    const user = await User.create({
+    const user = {
       username: 'johndoe',
       email: 'johndoe@example.com',
       password: '123456',
       gender: 'Male',
       birthdate: '1990/05/16'
-    });
+    };
+    await User.create(user);
     const res = await request(server)
       .post(PATH)
       .send({ username: user.username, password: user.password });
@@ -31,6 +32,11 @@ describe(`POST: ${PATH}`, () => {
     expect(res.body.data).toEqual(
       expect.objectContaining({ token: expect.any(String) })
     );
-    expect(verify(res.body.data.token)).not.toThrow();
+    await expect(verify(res.body.data.token)).resolves.toEqual(
+      expect.objectContaining({
+        _id: expect.any(String),
+        iat: expect.any(Number)
+      })
+    );
   });
 });
