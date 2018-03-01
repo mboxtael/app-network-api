@@ -24,13 +24,9 @@ const userSchema = new Schema({
     select: false
   },
   gender: {
-    type: String,
-    required: true
+    type: String
   },
-  birthdate: {
-    type: String,
-    required: true
-  }
+  birthdate: Date
 });
 userSchema.pre('save', true, async function(next, done) {
   next();

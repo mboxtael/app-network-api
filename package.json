@@ -7,11 +7,12 @@
   "license": "MIT",
   "scripts": {
     "start": "node ./node_modules/nodemon/bin/nodemon index.js",
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "dependencies": {
     "bcrypt": "^1.0.3",
     "dotenv": "^5.0.0",
+    "fb": "^2.0.0",
     "jsonwebtoken": "^8.1.1",
     "koa": "^2.5.0",
     "koa-bodyparser": "^4.2.0",
