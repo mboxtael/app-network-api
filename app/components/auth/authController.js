@@ -18,7 +18,7 @@ controller.post('/', async ctx => {
     }
 
     ctx.status = 201;
-    ctx.body = { data: { token: await sign(user.toJSON()) } };
+    ctx.body = { data: { user, token: await sign(user.toJSON()) } };
   } catch (error) {
     ctx.status = 500;
   }
@@ -38,7 +38,7 @@ controller.post('/facebook', async ctx => {
     });
 
     ctx.status = 201;
-    ctx.body = { data: { token: await sign(user.toJSON()) } };
+    ctx.body = { data: { user, token: await sign(user.toJSON()) } };
   } catch (error) {
     ctx.status = 422;
   }

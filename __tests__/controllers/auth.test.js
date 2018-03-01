@@ -38,12 +38,19 @@ describe(`POST: ${PATH}`, () => {
         iat: expect.any(Number)
       })
     );
+    expect(res.body.data.user).toEqual(
+      expect.objectContaining({
+        username: expect.any(String),
+        email: expect.any(String)
+      })
+    );
   });
 });
 
 describe(`POST: ${PATH}/facebook`, () => {
   it('should return valid auth token when send facebook access token', async () => {
-    const fbAccessToken = 'EAAQ5CGgGPd8BAMhIH8vwtPZBgZB5w3oQqvZAJee5YJsSqKeoOSwLjmHZAfZB7HaYEtD86yC5AZAlnxTCGJd93LcNkQIeAmZCwwYLZAUUICghqhGMluhZAHqdxe1EWSrA9zJVWHVnZCZAoPtA81HSa7ZChtFXCt6YtfvhFOaS7vKVsBNGNqHfNGYZCIeeU3eZA6yQ3r5ktrcZBMLYaSvCrE4dsqq4E38FjMVE9edSwnnidQdAUe0qwZDZD';
+    const fbAccessToken =
+      'EAAQ5CGgGPd8BAJGJq3D7k95w5KjHmPLnX1WY6o5oqyClEmdKJ0usAMe0oWDcmliTP2Jkag3CGdMEcVPnXilC1CipB4bZCwdt0OyMAl2vflGZC3jfwbbCHRd691nGUsOkisgFRVKProZC3PrYRZAVmM1LwuzR1DJ2U7308ZAVBLNjM3GaRgKT5oDN1hhdUq1VcKJV2wJTZBO0ZAearv595ZCHxDhZAI3B8el4Os5OQNMZCIdQZDZD';
     const res = await request(server)
       .post(`${PATH}/facebook`)
       .send({ accessToken: fbAccessToken });
@@ -57,6 +64,12 @@ describe(`POST: ${PATH}/facebook`, () => {
       expect.objectContaining({
         _id: expect.any(String),
         iat: expect.any(Number)
+      })
+    );
+    expect(res.body.data.user).toEqual(
+      expect.objectContaining({
+        username: expect.any(String),
+        email: expect.any(String)
       })
     );
   });
