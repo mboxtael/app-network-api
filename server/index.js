@@ -11,6 +11,6 @@ const auth = require('../app/components/auth/authController');
 app.use(users.routes());
 app.use(auth.routes());
 
-const server = app.listen(process.env.PORT || 3000);
+const server = app.listen(process.env.PORT_SERVER || 3000);
 
 module.exports = { app, server };
