@@ -1,11 +1,10 @@
 const request = require('supertest');
 const setupDatabase = require('../../test/setup-database');
 const { server } = require('../../server');
+
 const PATH = '/users';
 
-beforeEach(() => {
-  return setupDatabase();
-});
+beforeEach(() => setupDatabase());
 
 afterEach(() => {
   server.close();

@@ -3,6 +3,7 @@ const setupDatabase = require('../../test/setup-database');
 const { server } = require('../../server');
 const User = require('../../app/components/users/user');
 const { verify } = require('../../app/utils/jwt');
+
 const PATH = '/auth';
 
 beforeEach(async () => {
