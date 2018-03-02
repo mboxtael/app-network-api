@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const { FB } = require('fb');
 const { sign } = require('../../utils/jwt');
 const User = require('../users/user');
+const { validationErrors } = require('../../utils/mongoose');
 
 const controller = new Router({ prefix: '/auth' });
 
@@ -40,7 +41,9 @@ controller.post('/facebook', async ctx => {
     ctx.status = 201;
     ctx.body = { data: { user, token: await sign(user.toJSON()) } };
   } catch (error) {
+    console.log(error);
     ctx.status = 422;
+    ctx.body = { data: validationErrors(error) };
   }
 });
 

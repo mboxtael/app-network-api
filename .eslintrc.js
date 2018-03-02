@@ -7,6 +7,7 @@ module.exports = {
   },
   "rules": {
     "comma-dangle": "off",
-    "function-paren-newline": ["error", "consistent"]
+    "function-paren-newline": ["error", "consistent"],
+    "arrow-parens": "off"
   }
 };

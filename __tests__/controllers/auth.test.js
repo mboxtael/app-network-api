@@ -1,4 +1,5 @@
 const request = require('supertest');
+const { FB } = require('fb');
 const setupDatabase = require('../../test/setup-database');
 const { server } = require('../../server');
 const User = require('../../app/components/users/user');
@@ -50,8 +51,9 @@ describe(`POST: ${PATH}`, () => {
 
 describe(`POST: ${PATH}/facebook`, () => {
   it('should return valid auth token when send facebook access token', async () => {
-    const fbAccessToken =
-      'EAAQ5CGgGPd8BAJGJq3D7k95w5KjHmPLnX1WY6o5oqyClEmdKJ0usAMe0oWDcmliTP2Jkag3CGdMEcVPnXilC1CipB4bZCwdt0OyMAl2vflGZC3jfwbbCHRd691nGUsOkisgFRVKProZC3PrYRZAVmM1LwuzR1DJ2U7308ZAVBLNjM3GaRgKT5oDN1hhdUq1VcKJV2wJTZBO0ZAearv595ZCHxDhZAI3B8el4Os5OQNMZCIdQZDZD';
+    FB.setAccessToken('1188608174603743|uplLnN7Pm0WRhyadKtWTkrnS-64');
+    const testUsers = await FB.api('app/accounts/test-users');
+    const fbAccessToken = testUsers.data[0].access_token;
     const res = await request(server)
       .post(`${PATH}/facebook`)
       .send({ accessToken: fbAccessToken });
