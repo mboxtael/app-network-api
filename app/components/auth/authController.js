@@ -1,6 +1,6 @@
 const Router = require('koa-router');
 const bcrypt = require('bcrypt');
-const { FB } = require('fb');
+const { Facebook } = require('../../utils/facebook');
 const { sign } = require('../../utils/jwt');
 const User = require('../users/user');
 const { validationErrors } = require('../../utils/mongoose');
@@ -27,10 +27,10 @@ controller.post('/', async ctx => {
 
 controller.post('/facebook', async ctx => {
   const { body } = ctx.request;
-  FB.setAccessToken(body.accessToken);
+  const fb = new Facebook(body.accessToken);
 
   try {
-    const fbUser = await FB.api('/me', { fields: 'name,email,gender' });
+    const fbUser = await fb.me();
     const user = await User.create({
       username: fbUser.email,
       password: fbUser.id,
@@ -41,7 +41,6 @@ controller.post('/facebook', async ctx => {
     ctx.status = 201;
     ctx.body = { data: { user, token: await sign(user.toJSON()) } };
   } catch (error) {
-    console.log(error);
     ctx.status = 422;
     ctx.body = { data: validationErrors(error) };
   }
