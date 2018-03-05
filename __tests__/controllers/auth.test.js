@@ -1,9 +1,11 @@
 const request = require('supertest');
-const { FB } = require('fb');
 const setupDatabase = require('../../test/setup-database');
 const { server } = require('../../server');
 const User = require('../../app/components/users/user');
 const { verify } = require('../../app/utils/jwt');
+const { FB, mockMe } = require('../../app/utils/fb');
+
+jest.mock('../../app/utils/fb');
 
 const PATH = '/auth';
 
@@ -50,14 +52,15 @@ describe(`POST: ${PATH}`, () => {
 });
 
 describe(`POST: ${PATH}/facebook`, () => {
-  it('should return valid auth token when send facebook access token', async () => {
-    FB.setAccessToken('1188608174603743|uplLnN7Pm0WRhyadKtWTkrnS-64');
-    const testUsers = await FB.api('app/accounts/test-users');
-    const fbAccessToken = testUsers.data[0].access_token;
-    const res = await request(server)
-      .post(`${PATH}/facebook`)
-      .send({ accessToken: fbAccessToken });
+  const FACEBOOK_PATH = `${PATH}/facebook`;
 
+  it('should return a valid auth token when send valid access token', async () => {
+    const res = await request(server)
+      .post(FACEBOOK_PATH)
+      .send({ accessToken: 'fb_access_token' });
+
+    expect(FB).toHaveBeenCalledTimes(1);
+    expect(mockMe).toHaveBeenCalledTimes(1);
     expect(res.status).toEqual(201);
     expect(res.type).toEqual('application/json');
     expect(res.body.data).toEqual(
@@ -73,6 +76,23 @@ describe(`POST: ${PATH}/facebook`, () => {
       expect.objectContaining({
         username: expect.any(String),
         email: expect.any(String)
+      })
+    );
+  });
+  it('should return error when access token without email field is provided', async () => {
+    const res = await request(server)
+      .post(FACEBOOK_PATH)
+      .send({ accessToken: 'fb_access_token' });
+
+    expect(FB).toHaveBeenCalledTimes(2);
+    expect(mockMe).toHaveBeenCalledTimes(2);
+    expect(res.status).toEqual(422);
+    expect(res.type).toEqual('application/json');
+    expect(res.body.data.errors).toEqual(
+      expect.objectContaining({
+        email: expect.objectContaining({
+          type: expect.stringContaining('required')
+        })
       })
     );
   });
