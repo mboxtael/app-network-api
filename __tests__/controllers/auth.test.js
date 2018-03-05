@@ -18,15 +18,17 @@ afterEach(() => {
 });
 
 describe(`POST: ${PATH}`, () => {
+  const user = {
+    username: 'johndoe',
+    email: 'johndoe@example.com',
+    password: '123456',
+    gender: 'Male',
+    birthdate: '1990/05/16'
+  };
+
+  beforeEach(async () => User.create(user));
+
   it('should return a valid auth token', async () => {
-    const user = {
-      username: 'johndoe',
-      email: 'johndoe@example.com',
-      password: '123456',
-      gender: 'Male',
-      birthdate: '1990/05/16'
-    };
-    await User.create(user);
     const res = await request(server)
       .post(PATH)
       .send({ username: user.username, password: user.password });
@@ -48,6 +50,16 @@ describe(`POST: ${PATH}`, () => {
         email: expect.any(String)
       })
     );
+  });
+
+  it('should return an error when send invalid credentials', async () => {
+    const res = await request(server)
+      .post(PATH)
+      .send({ username: user.username, password: user.password.repeat(2) });
+
+    expect(res.status).toEqual(400);
+    expect(res.type).toEqual('application/json');
+    expect(res.body.data.error).toBeTruthy();
   });
 });
 

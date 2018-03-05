@@ -21,7 +21,8 @@ controller.post('/', async ctx => {
     ctx.status = 201;
     ctx.body = { data: { user, token: await sign(user.toJSON()) } };
   } catch (error) {
-    ctx.status = 500;
+    ctx.status = 400;
+    ctx.body = { data: { error } };
   }
 });
 
