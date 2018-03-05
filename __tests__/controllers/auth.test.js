@@ -1,7 +1,7 @@
 const request = require('supertest');
 const setupDatabase = require('../../test/setup-database');
 const { server } = require('../../server');
-const User = require('../../app/components/users/user');
+const { User } = require('../../app/components/users');
 const { verify } = require('../../app/utils/jwt');
 const { FB, mockMe } = require('../../app/utils/fb');
 

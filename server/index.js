@@ -5,11 +5,11 @@ require('dotenv').config();
 const app = new Koa();
 app.use(bodyParser());
 
-const users = require('../app/components/users/controller');
-const auth = require('../app/components/auth/authController');
+const { routes: userRoutes } = require('../app/components/users');
+const { routes: authRoutes } = require('../app/components/auth');
 
-app.use(users.routes());
-app.use(auth.routes());
+app.use(userRoutes);
+app.use(authRoutes);
 
 const server = app.listen(process.env.PORT_SERVER || 3000);
 

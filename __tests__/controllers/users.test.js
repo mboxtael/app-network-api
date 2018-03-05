@@ -18,7 +18,7 @@ describe(`POST: ${PATH}`, () => {
 
     expect(res.status).toEqual(422);
     expect(res.type).toEqual('application/json');
-    expect(Object.keys(res.body.data)).toEqual(
+    expect(Object.keys(res.body.data.errors)).toEqual(
       expect.arrayContaining(['username', 'email'])
     );
   });

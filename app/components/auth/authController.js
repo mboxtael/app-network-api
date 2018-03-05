@@ -2,7 +2,7 @@ const Router = require('koa-router');
 const bcrypt = require('bcrypt');
 const { FB } = require('../../utils/fb');
 const { sign } = require('../../utils/jwt');
-const User = require('../users/user');
+const { User } = require('../users');
 const { validationErrors } = require('../../utils/mongoose');
 
 const controller = new Router({ prefix: '/auth' });

@@ -1,5 +1,5 @@
 const Router = require('koa-router');
-const User = require('./user');
+const { User } = require('./userModel');
 const { validationErrors } = require('../../utils/mongoose');
 
 const controller = new Router({ prefix: '/users' });
@@ -12,7 +12,7 @@ controller.post('/', async ctx => {
     ctx.body = { data: user };
   } catch (error) {
     ctx.status = 422;
-    ctx.body = { data: validationErrors(error) };
+    ctx.body = { data: { errors: validationErrors(error) } };
   }
 });
 
