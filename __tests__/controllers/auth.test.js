@@ -3,9 +3,22 @@ const setupDatabase = require('../../test/setup-database');
 const { server } = require('../../server');
 const { User } = require('../../app/components/users');
 const { verify } = require('../../app/utils/jwt');
-const { FB, mockMe } = require('../../app/utils/fb');
+const FB = require('../../app/utils/fb');
 
-jest.mock('../../app/utils/fb');
+const mockMe = jest
+  .fn()
+  .mockImplementationOnce(() => ({
+    id: '123456',
+    email: 'jhondoe@example.com',
+    gender: 'male'
+  }))
+  .mockImplementationOnce(() => ({
+    id: '123456',
+    gender: 'male'
+  }));
+jest.mock('../../app/utils/fb', () =>
+  jest.fn().mockImplementation(() => ({ me: mockMe }))
+);
 
 const PATH = '/auth';
 

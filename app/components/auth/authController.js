@@ -1,6 +1,6 @@
 const Router = require('koa-router');
 const bcrypt = require('bcrypt');
-const { FB } = require('../../utils/fb');
+const FB = require('../../utils/fb');
 const { sign } = require('../../utils/jwt');
 const { User } = require('../users');
 const { validationErrors } = require('../../utils/mongoose');
