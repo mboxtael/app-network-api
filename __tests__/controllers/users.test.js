@@ -1,6 +1,7 @@
 const request = require('supertest');
 const setupDatabase = require('../../test/setup-database');
 const { server } = require('../../server');
+const { verify } = require('../../app/utils/jwt');
 
 const PATH = '/users';
 
@@ -23,7 +24,7 @@ describe(`POST: ${PATH}`, () => {
     );
   });
 
-  it('should return the newly added user alongside their id', async () => {
+  it('should return the newly added user alongside their auth token', async () => {
     const user = {
       username: 'johndoe',
       email: 'johndoe@example.com',
@@ -37,11 +38,17 @@ describe(`POST: ${PATH}`, () => {
 
     expect(res.status).toEqual(201);
     expect(res.type).toEqual('application/json');
-    expect(res.body.data).toEqual(
+    await expect(verify(res.body.data.token)).resolves.toEqual(
+      expect.objectContaining({
+        _id: expect.any(String),
+        iat: expect.any(Number)
+      })
+    );
+    expect(res.body.data.user).toEqual(
       expect.objectContaining({
         _id: expect.any(String)
       })
     );
-    expect(res.body.data).not.toHaveProperty('password');
+    expect(res.body.data.user).not.toHaveProperty('password');
   });
 });
