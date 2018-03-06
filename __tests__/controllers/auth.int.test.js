@@ -68,10 +68,20 @@ describe(`POST: ${PATH}`, () => {
     await expect(verify(res.body.data.token)).resolves.toBeTruthy();
   });
 
-  it('should return an error when send invalid credentials', async () => {
+  it('should return an error when send wrong password', async () => {
     const res = await request(server)
       .post(PATH)
       .send({ username: user.username, password: user.password.repeat(2) });
+
+    expect(res.status).toEqual(400);
+    expect(res.type).toEqual('application/json');
+    expect(res.body.data.error).toBeTruthy();
+  });
+
+  it("should return an error when user don't exists", async () => {
+    const res = await request(server)
+      .post(PATH)
+      .send({ username: 'janedoe', password: '123456' });
 
     expect(res.status).toEqual(400);
     expect(res.type).toEqual('application/json');

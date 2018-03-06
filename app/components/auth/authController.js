@@ -14,7 +14,7 @@ controller.post('/', async ctx => {
       $or: [{ username: body.username }, { email: body.username }]
     }).select('+password');
 
-    if (!await bcrypt.compare(body.password, user.password)) {
+    if (user == null || !await bcrypt.compare(body.password, user.password)) {
       throw new Error('Username or password are invalid');
     }
 
