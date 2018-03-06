@@ -3,7 +3,8 @@
 const fse = require('fs-extra');
 const Router = require('koa-router');
 const koaBody = require('koa-body');
-const { Post } = require('./postModel');
+const { Post: PostModel } = require('./postModel');
+const Post = require('./postDAL');
 const { validationErrors } = require('../../utils/mongoose');
 
 const multipartBody = koaBody({
@@ -14,11 +15,36 @@ const multipartBody = koaBody({
 });
 const controller = new Router({ prefix: '/posts' });
 
+controller.get('/', async ctx => {
+  try {
+    const posts = await Post.all();
+
+    ctx.status = 200;
+    ctx.body = { data: { posts } };
+  } catch (error) {
+    ctx.status = 400;
+    ctx.body = { data: { error: error.message } };
+  }
+});
+
+controller.get('/:id', async ctx => {
+  const { id } = ctx.params;
+  try {
+    const post = await Post.find(id);
+    
+    ctx.status = 200;
+    ctx.body = { data: { post } };
+  } catch (error) {
+    ctx.status = 400;
+    ctx.body = { data: { error: error.message } };
+  }
+});
+
 controller.post('/', multipartBody, async ctx => {
   const { fields, files } = ctx.request.body;
   const { image } = files;
   try {
-    const post = new Post({
+    const post = new PostModel({
       ...fields,
       tags: fields.tags.split(',')
     });

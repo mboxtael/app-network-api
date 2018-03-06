@@ -117,6 +117,7 @@ describe(`POST: ${PATH}/facebook`, () => {
       })
     );
   });
+
   it('should return error when access token without email field is provided', async () => {
     const res = await request(server)
       .post(FACEBOOK_PATH)
