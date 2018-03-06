@@ -16,8 +16,9 @@ const mockMe = jest
     id: '123456',
     gender: 'male'
   }));
-jest.mock('../../app/utils/fb', () =>
-  jest.fn().mockImplementation(() => ({ me: mockMe }))
+jest.mock(
+  '../../app/utils/fb',
+  () => jest.fn().mockImplementation(() => ({ me: mockMe }))
 );
 
 const PATH = '/auth';
@@ -41,28 +42,30 @@ describe(`POST: ${PATH}`, () => {
 
   beforeEach(async () => User.create(user));
 
-  it('should return a valid auth token', async () => {
+  it('should auth user by username', async () => {
     const res = await request(server)
       .post(PATH)
       .send({ username: user.username, password: user.password });
 
     expect(res.status).toEqual(201);
     expect(res.type).toEqual('application/json');
-    expect(res.body.data).toEqual(
-      expect.objectContaining({ token: expect.any(String) })
-    );
-    await expect(verify(res.body.data.token)).resolves.toEqual(
-      expect.objectContaining({
-        _id: expect.any(String),
-        iat: expect.any(Number)
-      })
-    );
+    await expect(verify(res.body.data.token)).resolves.toBeTruthy();
     expect(res.body.data.user).toEqual(
       expect.objectContaining({
         username: expect.any(String),
         email: expect.any(String)
       })
     );
+  });
+
+  it('should auth user by email', async () => {
+    const res = await request(server)
+      .post(PATH)
+      .send({ username: user.email, password: user.password });
+
+    expect(res.status).toEqual(201);
+    expect(res.type).toEqual('application/json');
+    await expect(verify(res.body.data.token)).resolves.toBeTruthy();
   });
 
   it('should return an error when send invalid credentials', async () => {
@@ -79,7 +82,7 @@ describe(`POST: ${PATH}`, () => {
 describe(`POST: ${PATH}/facebook`, () => {
   const FACEBOOK_PATH = `${PATH}/facebook`;
 
-  it('should return a valid auth token when send valid access token', async () => {
+  it('should auth user when send facebook access token', async () => {
     const res = await request(server)
       .post(FACEBOOK_PATH)
       .send({ accessToken: 'fb_access_token' });
