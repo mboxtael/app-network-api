@@ -75,7 +75,7 @@ describe(`POST: ${PATH}`, () => {
 
     expect(res.status).toEqual(400);
     expect(res.type).toEqual('application/json');
-    expect(res.body.data.error).toBeTruthy();
+    expect(res.body.data.error).toEqual(expect.any(String));
   });
 
   it("should return an error when user don't exists", async () => {
@@ -85,7 +85,7 @@ describe(`POST: ${PATH}`, () => {
 
     expect(res.status).toEqual(400);
     expect(res.type).toEqual('application/json');
-    expect(res.body.data.error).toBeTruthy();
+    expect(res.body.data.error).toEqual(expect.any(String));
   });
 });
 

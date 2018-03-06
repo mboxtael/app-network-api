@@ -22,7 +22,7 @@ controller.post('/', async ctx => {
     ctx.body = { data: { user, token: await sign(user.toJSON()) } };
   } catch (error) {
     ctx.status = 400;
-    ctx.body = { data: { error } };
+    ctx.body = { data: { error: error.message } };
   }
 });
 
