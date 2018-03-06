@@ -7,9 +7,11 @@ app.use(bodyParser());
 
 const { routes: userRoutes } = require('../app/components/users');
 const { routes: authRoutes } = require('../app/components/auth');
+const { routes: postRoutes } = require('../app/components/posts');
 
 app.use(userRoutes);
 app.use(authRoutes);
+app.use(postRoutes);
 
 const server = app.listen(process.env.PORT_SERVER || 3000);
 

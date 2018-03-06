@@ -74,3 +74,6 @@ typings/
 
 ## docker config
 db/*
+
+### Public storage ###
+public/images/posts/
