@@ -31,7 +31,7 @@ controller.get('/:id', async ctx => {
   const { id } = ctx.params;
   try {
     const post = await Post.find(id);
-    
+
     ctx.status = 200;
     ctx.body = { data: { post } };
   } catch (error) {

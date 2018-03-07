@@ -4,42 +4,46 @@ const { server } = require('../../server');
 const { Post } = require('../../app/components/posts');
 
 const PATH = '/posts';
+const post = {
+  title: 'Title post',
+  category: 'Category post',
+  body: 'Body post',
+  tags: ['tag1', 'tag2', 'tag3'],
+  image: '/path-to-image'
+};
+
 beforeEach(async () => setupDatabase());
 afterEach(() => {
   server.close();
 });
 
 describe(`GET: ${PATH}`, () => {
-  let post = null;
-  beforeEach(async () => {
-    post = await Post.create({
-      title: 'Title post',
-      category: 'Category post',
-      body: 'Body post',
-      tags: ['tag1', 'tag2', 'tag3'],
-      image: '/path-to-image'
-    });
-  });
   it('should return an array of posts', async () => {
+    await Post.create(post);
     const res = await request(server).get(PATH);
 
     expect(res.status).toEqual(200);
     expect(res.type).toEqual('application/json');
     expect(res.body.data.posts).toHaveLength(1);
   });
+});
 
-  describe(`GET: ${PATH}/id`, () => {
-    it('should return the requested post', async () => {
-      const res = await request(server).get(`${PATH}/${post._id}`);
-      
-      expect(res.status).toEqual(200);
-      expect(res.type).toEqual('application/json');
-      expect(res.body.data.post).toEqual(
-        expect.objectContaining({
-          _id: expect.stringContaining(post._id.toString())
-        })
-      );
-    });
+describe(`GET: ${PATH}/id`, () => {
+  it('should return the requested post', async () => {
+    const post1 = await Post.create(post);
+    const res = await request(server).get(`${PATH}/${post1._id}`);
+
+    expect(res.status).toEqual(200);
+    expect(res.type).toEqual('application/json');
+    expect(res.body.data.post).toEqual(
+      expect.objectContaining({
+        _id: expect.stringContaining(post1._id.toString()),
+        title: expect.any(String),
+        body: expect.any(String),
+        tags: expect.any(Array),
+        image: expect.any(String)
+      })
+    );
   });
 });
 
