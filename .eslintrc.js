@@ -9,6 +9,6 @@ module.exports = {
     'comma-dangle': 'off',
     'function-paren-newline': ['error', 'consistent'],
     'arrow-parens': 'off',
-    'no-underscore-dangle': ['error', { allowAfterThis: true }]
+    'no-underscore-dangle': ['error', { allowAfterThis: true, allow: ["_id"] }]
   }
 };

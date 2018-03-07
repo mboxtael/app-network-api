@@ -52,3 +52,4 @@ describe(`POST: ${PATH}`, () => {
     expect(res.body.data.user).not.toHaveProperty('password');
   });
 });
+

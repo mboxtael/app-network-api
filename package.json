@@ -20,6 +20,7 @@
     "koa-bodyparser": "^4.2.0",
     "koa-bunyan-logger": "^2.0.0",
     "koa-helmet": "^3.3.0",
+    "koa-jwt": "^3.3.0",
     "koa-router": "^7.4.0",
     "mongodb-memory-server": "^1.7.0",
     "mongoose": "^5.0.7",

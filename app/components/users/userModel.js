@@ -29,7 +29,11 @@ const userSchema = new Schema({
   gender: {
     type: String
   },
-  birthdate: Date
+  birthdate: Date,
+  likedPosts: [{
+    type: Schema.Types.ObjectId,
+    ref: 'posts'
+  }]
 });
 userSchema.pre('save', true, async function hashPassword(next, done) {
   next();

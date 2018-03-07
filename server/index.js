@@ -4,14 +4,30 @@ require('dotenv').config();
 
 const app = new Koa();
 app.use(bodyParser());
+app.use((ctx, next) =>
+  next().catch(err => {
+    if (err.status === 401) {
+      ctx.status = 401;
+      ctx.body = {
+        data: {
+          error: 'Protected resource, use Authorization header to get access'
+        }
+      };
+    } else {
+      throw err;
+    }
+  })
+);
 
-const { routes: userRoutes } = require('../app/components/users');
+const { routes: usersRoutes } = require('../app/components/users');
 const { routes: authRoutes } = require('../app/components/auth');
 const { routes: postRoutes } = require('../app/components/posts');
+const { routes: userRoutes } = require('../app/components/user');
 
-app.use(userRoutes);
+app.use(usersRoutes);
 app.use(authRoutes);
 app.use(postRoutes);
+app.use(userRoutes);
 
 const server = app.listen(process.env.PORT_SERVER || 3000);
 
