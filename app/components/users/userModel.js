@@ -2,6 +2,7 @@
 /* eslint no-param-reassign: ["error", {"props": true, "ignorePropertyModificationsFor": ["ret"] }] */
 
 const mongoose = require('mongoose');
+var uniqueValidator = require('mongoose-unique-validator');
 const { isEmail } = require('validator');
 const bcrypt = require('bcrypt');
 
@@ -46,6 +47,7 @@ userSchema.set('toObject', {
     return ret;
   }
 });
+userSchema.plugin(uniqueValidator);
 
 const User = mongoose.model('users', userSchema);
 

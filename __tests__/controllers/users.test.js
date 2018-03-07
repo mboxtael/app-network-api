@@ -2,7 +2,7 @@ const request = require('supertest');
 const setupDatabase = require('../../test/setup-database');
 const { server } = require('../../server');
 const { verify } = require('../../app/utils/jwt');
-
+const { User } = require('../../app/components/users');
 const PATH = '/users';
 
 beforeEach(() => setupDatabase());
@@ -50,6 +50,26 @@ describe(`POST: ${PATH}`, () => {
       })
     );
     expect(res.body.data.user).not.toHaveProperty('password');
+  });
+
+  it('should return an error when try to register duplicate user', async () => {
+    const user = {
+      username: 'johndoe',
+      email: 'johndoe@example.com',
+      password: '123456',
+      gender: 'Male',
+      birthdate: '1990/05/16'
+    };
+    await User.create(user);
+    const res = await request(server)
+      .post(PATH)
+      .send(user);
+
+    expect(res.status).toEqual(422);
+    expect(res.type).toEqual('application/json');
+    expect(Object.keys(res.body.data.errors)).toEqual(
+      expect.arrayContaining(['username', 'email'])
+    );
   });
 });
 
