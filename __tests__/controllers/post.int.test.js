@@ -1,3 +1,5 @@
+/* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
+
 const request = require('supertest');
 const setupDatabase = require('../../test/setup-database');
 const { server } = require('../../server');
@@ -28,7 +30,7 @@ describe(`GET: ${PATH}`, () => {
   });
 });
 
-describe(`GET: ${PATH}/id`, () => {
+describe(`GET: ${PATH}/:id`, () => {
   it('should return the requested post', async () => {
     const post1 = await Post.create(post);
     const res = await request(server).get(`${PATH}/${post1._id}`);
@@ -41,7 +43,10 @@ describe(`GET: ${PATH}/id`, () => {
         title: expect.any(String),
         body: expect.any(String),
         tags: expect.any(Array),
-        image: expect.any(String)
+        image: expect.any(String),
+        likes: expect.any(Number),
+        views: expect.any(Number),
+        comments: expect.any(Array)
       })
     );
   });
