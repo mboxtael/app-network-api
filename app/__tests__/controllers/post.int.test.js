@@ -31,7 +31,7 @@ describe(`GET: ${PATH}`, () => {
 });
 
 describe(`GET: ${PATH}/:id`, () => {
-  it('should return the requested post', async () => {
+  it('should return the requested post with incremented views', async () => {
     const post1 = await Post.create(post);
     const res = await request(server).get(`${PATH}/${post1._id}`);
 
@@ -45,7 +45,7 @@ describe(`GET: ${PATH}/:id`, () => {
         tags: expect.any(Array),
         image: expect.any(String),
         likes: expect.any(Number),
-        views: expect.any(Number),
+        views: 1,
         comments: expect.any(Array)
       })
     );

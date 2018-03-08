@@ -20,6 +20,14 @@ class PostDAL {
   static async decLikes(id) {
     return Post.findOneAndUpdate({ _id: id }, { $inc: { likes: -1 } });
   }
+
+  static async findAndIncViews(id) {
+    return Post.findOneAndUpdate(
+      { _id: id },
+      { $inc: { views: 1 } },
+      { new: true }
+    );
+  }
 }
 
 module.exports = PostDAL;

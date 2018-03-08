@@ -30,7 +30,7 @@ controller.get('/', async ctx => {
 controller.get('/:id', async ctx => {
   const { id } = ctx.params;
   try {
-    const post = await Post.find(id);
+    const post = await Post.findAndIncViews(id);
 
     ctx.status = 200;
     ctx.body = { data: { post } };
