@@ -46,6 +46,6 @@ describe(`POST: ${PATH_POSTS_FAVORITES}`, () => {
     const { status, type, body } = res;
     expect(status).toEqual(201);
     expect(type).toEqual('application/json');
-    expect(body.data.posts).toContainEqual(modelToJSON(post));
+    expect(body.data.posts).toContainEqual({ ...modelToJSON(post), likes: 1 });
   });
 });

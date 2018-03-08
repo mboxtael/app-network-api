@@ -1,4 +1,5 @@
 const { User } = require('./userModel');
+const { Post } = require('../posts');
 
 class UserDAL {
   static async create(user) {
@@ -6,11 +7,15 @@ class UserDAL {
   }
 
   static async likePost(userId, postId) {
-    return User.findOneAndUpdate(
+    const user = User.findOneAndUpdate(
       { _id: userId },
       { $push: { likedPosts: postId } },
       { new: true, populate: 'likedPosts' }
     );
+
+    await Post.incLikes(postId);
+
+    return user;
   }
 }
 

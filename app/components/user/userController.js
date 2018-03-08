@@ -13,6 +13,7 @@ controller.post('/posts/favorites', async ctx => {
     ctx.status = 201;
     ctx.body = { data: { posts: user.likedPosts } };
   } catch (error) {
+    console.log(error);
     ctx.status = 400;
     ctx.body = { data: { error: error.message } };
   }
