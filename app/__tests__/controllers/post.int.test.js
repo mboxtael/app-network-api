@@ -1,9 +1,9 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
 
 const request = require('supertest');
-const setupDatabase = require('../../test/setup-database');
-const { server } = require('../../server');
-const { Post } = require('../../app/components/posts');
+const setupDatabase = require('../../../test/setup-database');
+const { server } = require('../../../server');
+const { Post } = require('../../../app/components/posts');
 
 const PATH = '/posts';
 const post = {
