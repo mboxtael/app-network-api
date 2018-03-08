@@ -6,6 +6,7 @@ const koaBody = require('koa-body');
 const { Post: PostModel } = require('./postModel');
 const Post = require('./postDAL');
 const { validationErrors } = require('../../utils/mongoose');
+const { authenticate } = require('../../utils/jwt');
 
 const multipartBody = koaBody({
   multipart: true,
@@ -40,7 +41,7 @@ controller.get('/:id', async ctx => {
   }
 });
 
-controller.post('/', multipartBody, async ctx => {
+controller.post('/', authenticate, multipartBody, async ctx => {
   const { fields, files } = ctx.request.body;
   const { image } = files;
   try {

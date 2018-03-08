@@ -4,6 +4,7 @@ const request = require('supertest');
 const setupDatabase = require('../../../test/setup-database');
 const { server } = require('../../../server');
 const { Post } = require('../../../app/components/posts');
+const { User } = require('../../components/users');
 
 const PATH = '/posts';
 const post = {
@@ -21,7 +22,17 @@ afterEach(() => {
 
 describe(`GET: ${PATH}`, () => {
   it('should return an array of posts', async () => {
-    await Post.create(post);
+    const user = await User.create({
+      username: 'johndoe',
+      email: 'johndoe@example.com',
+      password: '123456',
+      gender: 'Male',
+      birthdate: '1990/05/16'
+    });
+    await Post.create({
+      ...post,
+      user: user._id.toString()
+    });
     const res = await request(server).get(PATH);
 
     expect(res.status).toEqual(200);
@@ -32,7 +43,17 @@ describe(`GET: ${PATH}`, () => {
 
 describe(`GET: ${PATH}/:id`, () => {
   it('should return the requested post with incremented views', async () => {
-    const post1 = await Post.create(post);
+    const user = await User.create({
+      username: 'johndoe',
+      email: 'johndoe@example.com',
+      password: '123456',
+      gender: 'Male',
+      birthdate: '1990/05/16'
+    });
+    const post1 = await Post.create({
+      ...post,
+      user: user._id.toString()
+    });
     const res = await request(server).get(`${PATH}/${post1._id}`);
 
     expect(res.status).toEqual(200);
@@ -53,10 +74,27 @@ describe(`GET: ${PATH}/:id`, () => {
 });
 
 describe(`POST: ${PATH}`, () => {
+  it("should return an error when user isn't authenticated", async () => {
+    const res = await request(server).post(PATH);
+
+    expect(res.status).toEqual(401);
+    expect(res.type).toEqual('application/json');
+    expect(res.body.data.error).toBeTruthy();
+  });
+
   it('should return the newly added post', async () => {
+    const user = await User.create({
+      username: 'johndoe',
+      email: 'johndoe@example.com',
+      password: '123456',
+      gender: 'Male',
+      birthdate: '1990/05/16'
+    });
     const tags = ['tag1', 'tag2', 'tag3'];
     const res = await request(server)
       .post(PATH)
+      .set('Authorization', `Bearer ${await user.authToken()}`)
+      .field('user', user._id.toString())
       .field('title', 'Title post')
       .field('category', 'Category post')
       .field('body', 'Body post')

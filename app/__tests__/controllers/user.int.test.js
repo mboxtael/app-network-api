@@ -22,8 +22,6 @@ const postExample = {
   image: '/path-to-image'
 };
 
-
-
 afterEach(() => {
   server.close();
 });
@@ -44,7 +42,10 @@ describe(`POST: ${PATH_POSTS_FAVORITES}`, () => {
 
   it('should add post to user favorites posts', async () => {
     user = await User.create(userExample);
-    post = await Post.create(postExample);
+    post = await Post.create({
+      ...postExample,
+      user: user._id.toString()
+    });
     const res = await request(server)
       .post(PATH_POSTS_FAVORITES)
       .set('Authorization', `Bearer ${await user.authToken()}`)
@@ -53,7 +54,11 @@ describe(`POST: ${PATH_POSTS_FAVORITES}`, () => {
     const { status, type, body } = res;
     expect(status).toEqual(201);
     expect(type).toEqual('application/json');
-    expect(body.data.posts).toContainEqual({ ...modelToJSON(post) });
+    expect(body.data.posts).toContainEqual({
+      ...post.toJSON(),
+      _id: post._id.toString(),
+      user: post.user.toString()
+    });
   });
 
   it('should remove post from user favorites posts', async () => {
