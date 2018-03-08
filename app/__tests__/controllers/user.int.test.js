@@ -7,14 +7,33 @@ const { modelToJSON } = require('../../../test/helpers');
 
 const PATH = '/user';
 const PATH_POSTS_FAVORITES = `${PATH}/posts/favorites`;
+const userExample = {
+  username: 'johndoe',
+  email: 'johndoe@example.com',
+  password: '123456',
+  gender: 'Male',
+  birthdate: '1990/05/16'
+};
+const postExample = {
+  title: 'Title post',
+  category: 'Category post',
+  body: 'Body post',
+  tags: ['tag1', 'tag2', 'tag3'],
+  image: '/path-to-image'
+};
 
-beforeEach(() => setupDatabase());
+
 
 afterEach(() => {
   server.close();
 });
 
 describe(`POST: ${PATH_POSTS_FAVORITES}`, () => {
+  let user = null;
+  let post = null;
+
+  beforeAll(() => setupDatabase());
+
   it("should return an error when user isn't authenticated", async () => {
     const res = await request(server).post(PATH_POSTS_FAVORITES);
 
@@ -23,21 +42,9 @@ describe(`POST: ${PATH_POSTS_FAVORITES}`, () => {
     expect(res.body.data.error).toBeTruthy();
   });
 
-  it("should add post to user favorite's posts", async () => {
-    const user = await User.create({
-      username: 'johndoe',
-      email: 'johndoe@example.com',
-      password: '123456',
-      gender: 'Male',
-      birthdate: '1990/05/16'
-    });
-    const post = await Post.create({
-      title: 'Title post',
-      category: 'Category post',
-      body: 'Body post',
-      tags: ['tag1', 'tag2', 'tag3'],
-      image: '/path-to-image'
-    });
+  it('should add post to user favorites posts', async () => {
+    user = await User.create(userExample);
+    post = await Post.create(postExample);
     const res = await request(server)
       .post(PATH_POSTS_FAVORITES)
       .set('Authorization', `Bearer ${await user.authToken()}`)
@@ -46,6 +53,17 @@ describe(`POST: ${PATH_POSTS_FAVORITES}`, () => {
     const { status, type, body } = res;
     expect(status).toEqual(201);
     expect(type).toEqual('application/json');
-    expect(body.data.posts).toContainEqual({ ...modelToJSON(post), likes: 1 });
+    expect(body.data.posts).toContainEqual({ ...modelToJSON(post) });
+  });
+
+  it('should remove post from user favorites posts', async () => {
+    const res = await request(server)
+      .delete(`${PATH_POSTS_FAVORITES}/${post._id}`)
+      .set('Authorization', `Bearer ${await user.authToken()}`);
+
+    const { status, type, body } = res;
+    expect(status).toEqual(200);
+    expect(type).toEqual('application/json');
+    expect(body.data.posts).toHaveLength(0);
   });
 });

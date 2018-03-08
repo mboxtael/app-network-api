@@ -7,15 +7,23 @@ class UserDAL {
   }
 
   static async likePost(userId, postId) {
-    const user = User.findOneAndUpdate(
+    const user = await this._likedPosts(userId, postId, '$push');
+    await Post.incLikes(postId);
+    return user;
+  }
+
+  static async removeLikedPost(userId, postId) {
+    const user = await this._likedPosts(userId, postId, '$pull');
+    await Post.decLikes(postId);
+    return user;
+  }
+
+  static async _likedPosts(userId, postId, action) {
+    return User.findOneAndUpdate(
       { _id: userId },
-      { $push: { likedPosts: postId } },
+      { [action]: { likedPosts: postId } },
       { new: true, populate: 'likedPosts' }
     );
-
-    await Post.incLikes(postId);
-
-    return user;
   }
 }
 

@@ -16,6 +16,10 @@ class PostDAL {
   static async incLikes(id) {
     return Post.findOneAndUpdate({ _id: id }, { $inc: { likes: 1 } });
   }
+
+  static async decLikes(id) {
+    return Post.findOneAndUpdate({ _id: id }, { $inc: { likes: -1 } });
+  }
 }
 
 module.exports = PostDAL;
