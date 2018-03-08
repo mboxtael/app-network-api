@@ -2,9 +2,10 @@
 /* eslint no-param-reassign: ["error", {"props": true, "ignorePropertyModificationsFor": ["ret"] }] */
 
 const mongoose = require('mongoose');
-var uniqueValidator = require('mongoose-unique-validator');
+const uniqueValidator = require('mongoose-unique-validator');
 const { isEmail } = require('validator');
 const bcrypt = require('bcrypt');
+const { sign } = require('../../utils/jwt');
 
 const { Schema } = mongoose;
 const userSchema = new Schema({
@@ -36,17 +37,24 @@ const userSchema = new Schema({
     ref: 'posts'
   }]
 });
+
 userSchema.pre('save', true, async function hashPassword(next, done) {
   next();
   this.password = await bcrypt.hash(this.password, 8);
   done();
 });
+
 userSchema.set('toObject', {
   transform: (doc, ret) => {
     delete ret.password;
     return ret;
   }
 });
+
+userSchema.methods.authToken = function authToken() {
+  return sign(this.toJSON());
+};
+
 userSchema.plugin(uniqueValidator);
 
 const User = mongoose.model('users', userSchema);
