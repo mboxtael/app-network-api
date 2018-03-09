@@ -23,11 +23,13 @@ const { routes: usersRoutes } = require('../app/components/users');
 const { routes: authRoutes } = require('../app/components/auth');
 const { routes: postRoutes } = require('../app/components/posts');
 const { routes: userRoutes } = require('../app/components/user');
+const { routes: commentsRoutes } = require('../app/components/comments');
 
 app.use(usersRoutes);
 app.use(authRoutes);
 app.use(postRoutes);
 app.use(userRoutes);
+app.use(commentsRoutes);
 
 const server = app.listen(process.env.PORT_SERVER || 3000);
 

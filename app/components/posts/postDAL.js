@@ -28,6 +28,15 @@ class PostDAL {
       { new: true }
     );
   }
+
+  static async addComment(id, comment) {
+    const post = await Post.findByIdAndUpdate(
+      id,
+      { $push: { comments: comment } },
+      { new: true }
+    );
+    return post.comments[post.comments.length - 1];
+  }
 }
 
 module.exports = PostDAL;
