@@ -19,7 +19,8 @@ const postExample = {
   category: 'Category post',
   body: 'Body post',
   tags: ['tag1', 'tag2', 'tag3'],
-  image: '/path-to-image'
+  image: '/path-to-image',
+  link: 'https://example.app'
 };
 
 afterEach(() => {

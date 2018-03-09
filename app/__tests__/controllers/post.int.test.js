@@ -12,7 +12,8 @@ const post = {
   category: 'Category post',
   body: 'Body post',
   tags: ['tag1', 'tag2', 'tag3'],
-  image: '/path-to-image'
+  image: '/path-to-image',
+  link: 'https://example.app'
 };
 
 beforeEach(async () => setupDatabase());
@@ -99,6 +100,7 @@ describe(`POST: ${PATH}`, () => {
       .field('category', 'Category post')
       .field('body', 'Body post')
       .field('tags', tags.join(','))
+      .field('link', 'https://example.app')
       .attach('image', 'test/assets/images/post.jpeg');
 
     expect(res.status).toEqual(201);

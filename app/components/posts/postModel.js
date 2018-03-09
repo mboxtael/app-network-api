@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { isURL } = require('validator');
 
 const commentSchema = new mongoose.Schema({
   body: {
@@ -34,6 +35,14 @@ const postSchema = new mongoose.Schema({
     required: true
   },
   tags: [String],
+  link: {
+    type: String,
+    required: true,
+    validate: {
+      validator: v => isURL(v),
+      message: "{VALUE} isn't a valid url"
+    }
+  },
   likes: {
     type: Number,
     default: 0
