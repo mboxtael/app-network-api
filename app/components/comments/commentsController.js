@@ -4,20 +4,6 @@ const { Post } = require('../posts');
 
 const controller = new Router({ prefix: '/posts/:postId/comments' });
 
-controller.get('/', async ctx => {
-  const { postId } = ctx.params;
-
-  try {
-    const { comments } = await Post.find(postId);
-
-    ctx.status = 200;
-    ctx.body = { data: { comments } };
-  } catch (error) {
-    ctx.status = 400;
-    ctx.body = { error: error.message };
-  }
-});
-
 controller.post('/', authenticate, async ctx => {
   const { postId } = ctx.params;
   const { body } = ctx.request;
