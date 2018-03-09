@@ -33,7 +33,7 @@ class PostDAL {
     const post = await Post.findByIdAndUpdate(
       id,
       { $push: { comments: comment } },
-      { new: true }
+      { new: true, populate: 'comments.user' }
     );
     return post.comments[post.comments.length - 1];
   }

@@ -45,7 +45,12 @@ describe(`POST: ${PATH}`, () => {
     expect(status).toEqual(201);
     expect(type).toEqual('application/json');
     expect(Object.keys(body.data.comment)).toEqual(
-      expect.arrayContaining(['_id', 'body', 'createdAt'])
+      expect.arrayContaining(['_id', 'body', 'createdAt', 'user'])
+    );
+    expect(body.data.comment.user).toEqual(
+      expect.objectContaining({
+        _id: user._id.toString()
+      })
     );
   });
 });
