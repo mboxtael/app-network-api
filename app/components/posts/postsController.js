@@ -24,7 +24,7 @@ controller.get('/', async ctx => {
     ctx.body = { data: { posts } };
   } catch (error) {
     ctx.status = 400;
-    ctx.body = { data: { error: error.message } };
+    ctx.body = { error: error.message };
   }
 });
 
@@ -37,7 +37,7 @@ controller.get('/:id', async ctx => {
     ctx.body = { data: { post } };
   } catch (error) {
     ctx.status = 400;
-    ctx.body = { data: { error: error.message } };
+    ctx.body = { error: error.message };
   }
 });
 
@@ -47,6 +47,7 @@ controller.post('/', authenticate, multipartBody, async ctx => {
   try {
     const post = new PostModel({
       ...fields,
+      user: ctx.state.user._id,
       tags: fields.tags.split(',')
     });
     post.image = `images/posts/${post._id}/${image.name}`;
@@ -57,7 +58,7 @@ controller.post('/', authenticate, multipartBody, async ctx => {
     ctx.body = { data: { post } };
   } catch (error) {
     ctx.status = 422;
-    ctx.body = { data: { errors: validationErrors(error) } };
+    ctx.body = { error: validationErrors(error) };
   }
 });
 

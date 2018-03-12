@@ -7,13 +7,20 @@ const { Post } = require('../../app/components/posts');
 const { User } = require('../components/users');
 
 const PATH = '/posts';
-const post = {
+const postExample = {
   title: 'Title post',
   category: 'Category post',
   body: 'Body post',
   tags: ['tag1', 'tag2', 'tag3'],
   image: '/path-to-image',
   link: 'https://example.app'
+};
+const userExample = {
+  username: 'johndoe',
+  email: 'johndoe@example.com',
+  password: '123456',
+  gender: 'Male',
+  birthdate: '1990/05/16'
 };
 
 beforeEach(async () => setupDatabase());
@@ -23,15 +30,9 @@ afterEach(() => {
 
 describe(`GET: ${PATH}`, () => {
   it('should return an array of posts', async () => {
-    const user = await User.create({
-      username: 'johndoe',
-      email: 'johndoe@example.com',
-      password: '123456',
-      gender: 'Male',
-      birthdate: '1990/05/16'
-    });
+    const user = await User.create(userExample);
     await Post.create({
-      ...post,
+      ...postExample,
       user: user._id.toString()
     });
     const res = await request(server).get(PATH);
@@ -44,15 +45,9 @@ describe(`GET: ${PATH}`, () => {
 
 describe(`GET: ${PATH}/:id`, () => {
   it('should return the requested post with incremented views', async () => {
-    const user = await User.create({
-      username: 'johndoe',
-      email: 'johndoe@example.com',
-      password: '123456',
-      gender: 'Male',
-      birthdate: '1990/05/16'
-    });
+    const user = await User.create(userExample);
     const post1 = await Post.create({
-      ...post,
+      ...postExample,
       user: user._id.toString()
     });
     const res = await request(server).get(`${PATH}/${post1._id}`);
@@ -83,23 +78,35 @@ describe(`POST: ${PATH}`, () => {
     expect(res.body.data.error).toBeTruthy();
   });
 
+  // it('should fail when missing required fields', async () => {
+  //   const user = await User.create(userExample);
+  //   const res = await request(server)
+  //     .post(PATH)
+  //     .set('Authorization', `Bearer ${await user.authToken()}`);
+
+  //   expect(res.status).toEqual(422);
+  //   expect(res.type).toEqual('application/json');
+  //   expect(Object.keys(res.body.data.errors)).toEqual(
+  //     expect.arrayContaining([
+  //       'title',
+  //       'category',
+  //       'body',
+  //       'image',
+  //       'link',
+  //       'user'
+  //     ])
+  //   );
+  // });
+
   it('should return the newly added post', async () => {
-    const user = await User.create({
-      username: 'johndoe',
-      email: 'johndoe@example.com',
-      password: '123456',
-      gender: 'Male',
-      birthdate: '1990/05/16'
-    });
-    const tags = ['tag1', 'tag2', 'tag3'];
+    const user = await User.create(userExample);
     const res = await request(server)
       .post(PATH)
       .set('Authorization', `Bearer ${await user.authToken()}`)
-      .field('user', user._id.toString())
       .field('title', 'Title post')
       .field('category', 'Category post')
       .field('body', 'Body post')
-      .field('tags', tags.join(','))
+      .field('tags', postExample.tags.join(','))
       .field('link', 'https://example.app')
       .attach('image', 'test/assets/images/post.jpeg');
 
@@ -112,7 +119,7 @@ describe(`POST: ${PATH}`, () => {
         category: expect.any(String),
         body: expect.any(String),
         image: expect.any(String),
-        tags: expect.arrayContaining(tags)
+        tags: expect.arrayContaining(postExample.tags)
       })
     );
   });

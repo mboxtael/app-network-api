@@ -3,5 +3,5 @@ const Post = require('./postDAL');
 
 module.exports = {
   Post,
-  routes: controller.routes()
+  routes: controller.middleware()
 };

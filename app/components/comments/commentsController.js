@@ -1,6 +1,7 @@
 const Router = require('koa-router');
 const { authenticate } = require('../../utils/jwt');
 const { Post } = require('../posts');
+const { validationErrors } = require('../../utils/mongoose');
 
 const controller = new Router({ prefix: '/posts/:postId/comments' });
 
@@ -17,7 +18,7 @@ controller.post('/', authenticate, async ctx => {
     ctx.body = { data: { comment } };
   } catch (error) {
     ctx.status = 422;
-    ctx.body = { error: error.message };
+    ctx.body = { error: validationErrors(error) };
   }
 });
 
