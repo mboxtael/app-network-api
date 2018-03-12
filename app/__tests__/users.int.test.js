@@ -1,8 +1,8 @@
 const request = require('supertest');
-const setupDatabase = require('../../../test/setup-database');
-const { server } = require('../../../server');
-const { verify } = require('../../../app/utils/jwt');
-const { User } = require('../../../app/components/users');
+const setupDatabase = require('../../test/setup-database');
+const { server } = require('../../server');
+const { verify } = require('../../app/utils/jwt');
+const { User } = require('../../app/components/users');
 
 const PATH = '/users';
 

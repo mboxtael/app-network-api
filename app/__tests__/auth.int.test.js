@@ -1,9 +1,9 @@
 const request = require('supertest');
-const setupDatabase = require('../../../test/setup-database');
-const { server } = require('../../../server');
-const { User } = require('../../../app/components/users');
-const { verify } = require('../../../app/utils/jwt');
-const FB = require('../../utils/fb');
+const setupDatabase = require('../../test/setup-database');
+const { server } = require('../../server');
+const { User } = require('../../app/components/users');
+const { verify } = require('../../app/utils/jwt');
+const FB = require('../utils/fb');
 
 const mockMe = jest
   .fn()
@@ -17,7 +17,7 @@ const mockMe = jest
     gender: 'male'
   }));
 jest.mock(
-  '../../utils/fb',
+  '../utils/fb',
   () => jest.fn().mockImplementation(() => ({ me: mockMe }))
 );
 

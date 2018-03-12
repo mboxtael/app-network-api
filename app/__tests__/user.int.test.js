@@ -1,9 +1,8 @@
 const request = require('supertest');
-const setupDatabase = require('../../../test/setup-database');
-const { server } = require('../../../server');
-const { User } = require('../../components/users');
-const { Post } = require('../../components/posts');
-const { modelToJSON } = require('../../../test/helpers');
+const setupDatabase = require('../../test/setup-database');
+const { server } = require('../../server');
+const { User } = require('../components/users');
+const { Post } = require('../components/posts');
 
 const PATH = '/user';
 const PATH_POSTS_FAVORITES = `${PATH}/posts/favorites`;
