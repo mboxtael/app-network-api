@@ -10,6 +10,7 @@
     "test": "jest --runInBand"
   },
   "dependencies": {
+    "@koa/cors": "2",
     "bcrypt": "^1.0.3",
     "dotenv": "^5.0.0",
     "fb": "^2.0.0",
