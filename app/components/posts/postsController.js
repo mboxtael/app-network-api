@@ -3,10 +3,12 @@
 const fse = require('fs-extra');
 const Router = require('koa-router');
 const koaBody = require('koa-body');
+const Joi = require('joi');
 const { Post: PostModel } = require('./postModel');
 const Post = require('./postDAL');
 const { validationErrors } = require('../../utils/mongoose');
 const { authenticate } = require('../../utils/jwt');
+const { joiErrors } = require('../../utils/response');
 
 const multipartBody = koaBody({
   multipart: true,
@@ -41,9 +43,32 @@ controller.get('/:id', async ctx => {
   }
 });
 
-controller.post('/', authenticate, multipartBody, async ctx => {
+function validate() {
+  return (ctx, next) => {
+    const schema = Joi.object().keys({
+      title: Joi.string().required(),
+      category: Joi.string().required(),
+      body: Joi.string().required(),
+      link: Joi.string().required(),
+      image: Joi.object().required(),
+      tags: Joi.string().required()
+    });
+    const { fields, files } = ctx.request.body;
+    const result = Joi.validate({ ...fields, ...files }, schema, { abortEarly: false });
+
+    if (result.error == null) {
+      return next();
+    }
+
+    ctx.status = 422;
+    ctx.body = { error: joiErrors(result.error) };
+  };
+}
+
+controller.post('/', authenticate, multipartBody, validate(), async ctx => {
   const { fields, files } = ctx.request.body;
   const { image } = files;
+
   try {
     const post = new PostModel({
       ...fields,

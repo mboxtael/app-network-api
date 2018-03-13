@@ -78,25 +78,24 @@ describe(`POST: ${PATH}`, () => {
     expect(res.body.data.error).toBeTruthy();
   });
 
-  // it('should fail when missing required fields', async () => {
-  //   const user = await User.create(userExample);
-  //   const res = await request(server)
-  //     .post(PATH)
-  //     .set('Authorization', `Bearer ${await user.authToken()}`);
+  it('should fail when missing required fields', async () => {
+    const user = await User.create(userExample);
+    const res = await request(server)
+      .post(PATH)
+      .set('Authorization', `Bearer ${await user.authToken()}`);
 
-  //   expect(res.status).toEqual(422);
-  //   expect(res.type).toEqual('application/json');
-  //   expect(Object.keys(res.body.data.errors)).toEqual(
-  //     expect.arrayContaining([
-  //       'title',
-  //       'category',
-  //       'body',
-  //       'image',
-  //       'link',
-  //       'user'
-  //     ])
-  //   );
-  // });
+    expect(res.status).toEqual(422);
+    expect(res.type).toEqual('application/json');
+    expect(Object.keys(res.body.error)).toEqual(
+      expect.arrayContaining([
+        'title',
+        'category',
+        'body',
+        'image',
+        'link'
+      ])
+    );
+  });
 
   it('should return the newly added post', async () => {
     const user = await User.create(userExample);
