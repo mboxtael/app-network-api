@@ -54,7 +54,9 @@ function validate() {
       tags: Joi.string().required()
     });
     const { fields, files } = ctx.request.body;
-    const result = Joi.validate({ ...fields, ...files }, schema, { abortEarly: false });
+    const result = Joi.validate({ ...fields, ...files }, schema, {
+      abortEarly: false
+    });
 
     if (result.error == null) {
       return next();
@@ -80,6 +82,32 @@ controller.post('/', authenticate, multipartBody, validate(), async ctx => {
     await post.save();
 
     ctx.status = 201;
+    ctx.body = { data: { post } };
+  } catch (error) {
+    ctx.status = 422;
+    ctx.body = { error: validationErrors(error) };
+  }
+});
+
+controller.put('/:id', authenticate, multipartBody, async ctx => {
+  const { fields, files } = ctx.request.body;
+  const { image } = files;
+  const { id } = ctx.params;
+  try {
+    let imagePath = null;
+    if (image) {
+      imagePath = `images/posts/${id}/${image.name}`;
+      await fse.copy(image.path, `public/${imagePath}`);
+    }
+    const post = await Post.findAndUpdate(id, { ...fields, image: imagePath });
+
+    if (post == null) {
+      ctx.status = 404;
+      ctx.body = { error: 'Post not found' };
+      return;
+    }
+
+    ctx.status = 200;
     ctx.body = { data: { post } };
   } catch (error) {
     ctx.status = 422;

@@ -70,7 +70,7 @@ describe(`GET: ${PATH}/:id`, () => {
 });
 
 describe(`POST: ${PATH}`, () => {
-  it("should return an error when user isn't authenticated", async () => {
+  it("should return unauthorized error when user isn't authenticated", async () => {
     const res = await request(server).post(PATH);
 
     expect(res.status).toEqual(401);
@@ -87,13 +87,7 @@ describe(`POST: ${PATH}`, () => {
     expect(res.status).toEqual(422);
     expect(res.type).toEqual('application/json');
     expect(Object.keys(res.body.error)).toEqual(
-      expect.arrayContaining([
-        'title',
-        'category',
-        'body',
-        'image',
-        'link'
-      ])
+      expect.arrayContaining(['title', 'category', 'body', 'image', 'link'])
     );
   });
 
@@ -102,11 +96,11 @@ describe(`POST: ${PATH}`, () => {
     const res = await request(server)
       .post(PATH)
       .set('Authorization', `Bearer ${await user.authToken()}`)
-      .field('title', 'Title post')
-      .field('category', 'Category post')
-      .field('body', 'Body post')
+      .field('title', postExample.title)
+      .field('category', postExample.category)
+      .field('body', postExample.body)
       .field('tags', postExample.tags.join(','))
-      .field('link', 'https://example.app')
+      .field('link', postExample.link)
       .attach('image', 'test/assets/images/post.jpeg');
 
     expect(res.status).toEqual(201);
@@ -119,6 +113,64 @@ describe(`POST: ${PATH}`, () => {
         body: expect.any(String),
         image: expect.any(String),
         tags: expect.arrayContaining(postExample.tags)
+      })
+    );
+  });
+});
+
+describe(`PUT: ${PATH}/:id`, () => {
+  it("should return unauthorized error when user isn't authenticated", async () => {
+    const res = await request(server).post(PATH);
+
+    expect(res.status).toEqual(401);
+    expect(res.type).toEqual('application/json');
+    expect(res.body.data.error).toBeTruthy();
+  });
+
+  it('should return not found when trying to edit a nonexistent post', async () => {
+    const user = await User.create(userExample);
+    const post = new Post({ ...postExample });
+    const res = await request(server)
+      .put(`${PATH}/${post._id}`)
+      .set('Authorization', `Bearer ${await user.authToken()}`)
+      .set('Content-Type', 'multipart/form-data');
+
+    const { status, type, body } = res;
+    expect(status).toEqual(404);
+    expect(type).toEqual('application/json');
+    expect(body.error).toBeTruthy();
+  });
+
+  it('should return the edited post', async () => {
+    const postEdited = {
+      title: 'Edited title post',
+      category: 'Edited category post',
+      body: 'Edited body post',
+      tags: ['tag1'],
+      link: 'https://edited-example.app'
+    };
+    const user = await User.create(userExample);
+    const post = await Post.create({ ...postExample, user: user._id });
+    const res = await request(server)
+      .put(`${PATH}/${post._id}`)
+      .set('Authorization', `Bearer ${await user.authToken()}`)
+      .field('title', postEdited.title)
+      .field('category', postEdited.category)
+      .field('body', postEdited.body)
+      .field('tags', postEdited.tags.join(','))
+      .field('link', postEdited.link)
+      .attach('image', 'test/assets/images/post.jpeg');
+
+    expect(res.status).toEqual(200);
+    expect(res.type).toEqual('application/json');
+    expect(res.body.data.post).toEqual(
+      expect.objectContaining({
+        _id: post._id.toString(),
+        title: postEdited.title,
+        category: postEdited.category,
+        body: postEdited.body,
+        image: expect.any(String),
+        tags: expect.arrayContaining(postEdited.tags)
       })
     );
   });

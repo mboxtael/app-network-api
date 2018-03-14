@@ -1,6 +1,13 @@
 const { Post } = require('./postModel');
 
 class PostDAL {
+  constructor(post) {
+    const model = new Post(post);
+    Object.keys(model.toJSON()).forEach(key => {
+      this[key] = model[key];
+    });
+  }
+
   static async create(post) {
     return Post.create(post);
   }
@@ -11,6 +18,10 @@ class PostDAL {
 
   static async find(id) {
     return Post.findById(id);
+  }
+
+  static async findAndUpdate(id, post) {
+    return Post.findByIdAndUpdate(id, { $set: { ...post } }, { new: true });
   }
 
   static async incLikes(id) {

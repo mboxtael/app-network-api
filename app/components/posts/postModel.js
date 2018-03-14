@@ -60,6 +60,7 @@ const postSchema = new mongoose.Schema({
     required: true
   }
 });
+
 const PostModel = mongoose.model('posts', postSchema);
 
 module.exports = {
