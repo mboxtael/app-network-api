@@ -24,6 +24,10 @@ class PostDAL {
     return Post.findByIdAndUpdate(id, { $set: { ...post } }, { new: true });
   }
 
+  static async findAndRemove(id) {
+    return Post.findByIdAndRemove(id);
+  }
+
   static async incLikes(id) {
     return Post.findOneAndUpdate({ _id: id }, { $inc: { likes: 1 } });
   }

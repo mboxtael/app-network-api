@@ -175,3 +175,39 @@ describe(`PUT: ${PATH}/:id`, () => {
     );
   });
 });
+
+describe(`DELETE: ${PATH}/:id`, () => {
+  it("should return unauthorized error when user isn't authenticated", async () => {
+    const res = await request(server).post(PATH);
+
+    expect(res.status).toEqual(401);
+    expect(res.type).toEqual('application/json');
+    expect(res.body.data.error).toBeTruthy();
+  });
+
+  it('should return not found when trying to delete a nonexistent post', async () => {
+    const user = await User.create(userExample);
+    const post = new Post({ ...postExample });
+    const res = await request(server)
+      .delete(`${PATH}/${post._id}`)
+      .set('Authorization', `Bearer ${await user.authToken()}`);
+
+    const { status, type, body } = res;
+    expect(status).toEqual(404);
+    expect(type).toEqual('application/json');
+    expect(body.error).toBeTruthy();
+  });
+
+  it('should delete the requested post', async () => {
+    const user = await User.create(userExample);
+    const post = await Post.create({ ...postExample, user: user._id });
+    const res = await request(server)
+      .delete(`${PATH}/${post._id}`)
+      .set('Authorization', `Bearer ${await user.authToken()}`);
+
+    const { status, type, body } = res;
+    expect(status).toEqual(200);
+    expect(type).toEqual('application/json');
+    expect(body.message).toBeTruthy();
+  });
+});

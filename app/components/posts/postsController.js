@@ -115,4 +115,22 @@ controller.put('/:id', authenticate, multipartBody, async ctx => {
   }
 });
 
+controller.delete('/:id', authenticate, async ctx => {
+  const { id } = ctx.params;
+
+  try {
+    const post = await Post.findAndRemove(id);
+
+    if (post == null) {
+      throw new Error('Post not found ');
+    }
+
+    ctx.status = 200;
+    ctx.body = { message: 'Post removed sucessfully' };
+  } catch (error) {
+    ctx.status = 404;
+    ctx.body = { error: error.message };
+  }
+});
+
 module.exports = controller;
