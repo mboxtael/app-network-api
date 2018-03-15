@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { server } = require('../../server');
+const app = require('../../app');
 const setupDatabase = require('../../test/setup-database');
 const { User } = require('../components/users');
 const { Post } = require('../components/posts');
@@ -7,13 +7,10 @@ const { Post } = require('../components/posts');
 const PATH = '/posts/:id/comments';
 
 beforeEach(async () => setupDatabase());
-afterEach(() => {
-  server.close();
-});
 
 describe(`POST: ${PATH}`, () => {
   it("should return an error when user isn't authenticated", async () => {
-    const res = await request(server).post(PATH);
+    const res = await request(app.listen()).post(PATH);
 
     expect(res.status).toEqual(401);
     expect(res.type).toEqual('application/json');
@@ -37,7 +34,7 @@ describe(`POST: ${PATH}`, () => {
       link: 'https://example.app',
       user: user._id
     });
-    const res = await request(server)
+    const res = await request(app.listen())
       .post(`/posts/${post._id}/comments`)
       .set('Authorization', `Bearer ${await user.authToken()}`)
       .send({ body: 'Post comment' });

@@ -2,7 +2,7 @@
 
 const request = require('supertest');
 const setupDatabase = require('../../test/setup-database');
-const { server } = require('../../server');
+const app = require('../../app');
 const { Post } = require('../../app/components/posts');
 const { User } = require('../components/users');
 
@@ -24,9 +24,6 @@ const userExample = {
 };
 
 beforeEach(async () => setupDatabase());
-afterEach(() => {
-  server.close();
-});
 
 describe(`GET: ${PATH}`, () => {
   it('should return an array of posts', async () => {
@@ -35,7 +32,7 @@ describe(`GET: ${PATH}`, () => {
       ...postExample,
       user: user._id.toString()
     });
-    const res = await request(server).get(PATH);
+    const res = await request(app.listen()).get(PATH);
 
     expect(res.status).toEqual(200);
     expect(res.type).toEqual('application/json');
@@ -50,7 +47,7 @@ describe(`GET: ${PATH}/:id`, () => {
       ...postExample,
       user: user._id.toString()
     });
-    const res = await request(server).get(`${PATH}/${post1._id}`);
+    const res = await request(app.listen()).get(`${PATH}/${post1._id}`);
 
     expect(res.status).toEqual(200);
     expect(res.type).toEqual('application/json');
@@ -71,7 +68,7 @@ describe(`GET: ${PATH}/:id`, () => {
 
 describe(`POST: ${PATH}`, () => {
   it("should return unauthorized error when user isn't authenticated", async () => {
-    const res = await request(server).post(PATH);
+    const res = await request(app.listen()).post(PATH);
 
     expect(res.status).toEqual(401);
     expect(res.type).toEqual('application/json');
@@ -80,7 +77,7 @@ describe(`POST: ${PATH}`, () => {
 
   it('should fail when missing required fields', async () => {
     const user = await User.create(userExample);
-    const res = await request(server)
+    const res = await request(app.listen())
       .post(PATH)
       .set('Authorization', `Bearer ${await user.authToken()}`);
 
@@ -93,7 +90,7 @@ describe(`POST: ${PATH}`, () => {
 
   it('should return the newly added post', async () => {
     const user = await User.create(userExample);
-    const res = await request(server)
+    const res = await request(app.listen())
       .post(PATH)
       .set('Authorization', `Bearer ${await user.authToken()}`)
       .field('title', postExample.title)
@@ -120,7 +117,7 @@ describe(`POST: ${PATH}`, () => {
 
 describe(`PUT: ${PATH}/:id`, () => {
   it("should return unauthorized error when user isn't authenticated", async () => {
-    const res = await request(server).post(PATH);
+    const res = await request(app.listen()).post(PATH);
 
     expect(res.status).toEqual(401);
     expect(res.type).toEqual('application/json');
@@ -130,7 +127,7 @@ describe(`PUT: ${PATH}/:id`, () => {
   it('should return not found when trying to edit a nonexistent post', async () => {
     const user = await User.create(userExample);
     const post = new Post({ ...postExample });
-    const res = await request(server)
+    const res = await request(app.listen())
       .put(`${PATH}/${post._id}`)
       .set('Authorization', `Bearer ${await user.authToken()}`)
       .set('Content-Type', 'multipart/form-data');
@@ -151,7 +148,7 @@ describe(`PUT: ${PATH}/:id`, () => {
     };
     const user = await User.create(userExample);
     const post = await Post.create({ ...postExample, user: user._id });
-    const res = await request(server)
+    const res = await request(app.listen())
       .put(`${PATH}/${post._id}`)
       .set('Authorization', `Bearer ${await user.authToken()}`)
       .field('title', postEdited.title)
@@ -178,7 +175,7 @@ describe(`PUT: ${PATH}/:id`, () => {
 
 describe(`DELETE: ${PATH}/:id`, () => {
   it("should return unauthorized error when user isn't authenticated", async () => {
-    const res = await request(server).post(PATH);
+    const res = await request(app.listen()).post(PATH);
 
     expect(res.status).toEqual(401);
     expect(res.type).toEqual('application/json');
@@ -188,7 +185,7 @@ describe(`DELETE: ${PATH}/:id`, () => {
   it('should return not found when trying to delete a nonexistent post', async () => {
     const user = await User.create(userExample);
     const post = new Post({ ...postExample });
-    const res = await request(server)
+    const res = await request(app.listen())
       .delete(`${PATH}/${post._id}`)
       .set('Authorization', `Bearer ${await user.authToken()}`);
 
@@ -201,7 +198,7 @@ describe(`DELETE: ${PATH}/:id`, () => {
   it('should delete the requested post', async () => {
     const user = await User.create(userExample);
     const post = await Post.create({ ...postExample, user: user._id });
-    const res = await request(server)
+    const res = await request(app.listen())
       .delete(`${PATH}/${post._id}`)
       .set('Authorization', `Bearer ${await user.authToken()}`);
 

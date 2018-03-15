@@ -6,7 +6,7 @@
   "author": "Garonz",
   "license": "MIT",
   "scripts": {
-    "start": "node ./node_modules/nodemon/bin/nodemon index.js",
+    "start": "node ./node_modules/nodemon/bin/nodemon ./bin/www",
     "test": "jest --runInBand"
   },
   "dependencies": {

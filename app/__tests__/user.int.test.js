@@ -1,6 +1,6 @@
 const request = require('supertest');
 const setupDatabase = require('../../test/setup-database');
-const { server } = require('../../server');
+const app = require('../../app');
 const { User } = require('../components/users');
 const { Post } = require('../components/posts');
 
@@ -22,10 +22,6 @@ const postExample = {
   link: 'https://example.app'
 };
 
-afterEach(() => {
-  server.close();
-});
-
 describe(`POST: ${PATH_POSTS_FAVORITES}`, () => {
   let user = null;
   let post = null;
@@ -33,7 +29,7 @@ describe(`POST: ${PATH_POSTS_FAVORITES}`, () => {
   beforeAll(() => setupDatabase());
 
   it("should return an error when user isn't authenticated", async () => {
-    const res = await request(server).post(PATH_POSTS_FAVORITES);
+    const res = await request(app.listen()).post(PATH_POSTS_FAVORITES);
 
     expect(res.status).toEqual(401);
     expect(res.type).toEqual('application/json');
@@ -46,7 +42,7 @@ describe(`POST: ${PATH_POSTS_FAVORITES}`, () => {
       ...postExample,
       user: user._id.toString()
     });
-    const res = await request(server)
+    const res = await request(app.listen())
       .post(PATH_POSTS_FAVORITES)
       .set('Authorization', `Bearer ${await user.authToken()}`)
       .send({ postId: post._id });
@@ -62,7 +58,7 @@ describe(`POST: ${PATH_POSTS_FAVORITES}`, () => {
   });
 
   it('should remove post from user favorites posts', async () => {
-    const res = await request(server)
+    const res = await request(app.listen())
       .delete(`${PATH_POSTS_FAVORITES}/${post._id}`)
       .set('Authorization', `Bearer ${await user.authToken()}`);
 

@@ -2,12 +2,14 @@ const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
 const serve = require('koa-static');
+const helmet = require('koa-helmet');
 require('dotenv').config();
 
 const app = new Koa();
 app.use(bodyParser());
 app.use(cors());
 app.use(serve('public'));
+app.use(helmet());
 app.use((ctx, next) =>
   next().catch(err => {
     if (err.status === 401) {
@@ -23,11 +25,11 @@ app.use((ctx, next) =>
   })
 );
 
-const { routes: usersRoutes } = require('../app/components/users');
-const { routes: authRoutes } = require('../app/components/auth');
-const { routes: postRoutes } = require('../app/components/posts');
-const { routes: userRoutes } = require('../app/components/user');
-const { routes: commentsRoutes } = require('../app/components/comments');
+const { routes: usersRoutes } = require('./app/components/users');
+const { routes: authRoutes } = require('./app/components/auth');
+const { routes: postRoutes } = require('./app/components/posts');
+const { routes: userRoutes } = require('./app/components/user');
+const { routes: commentsRoutes } = require('./app/components/comments');
 
 app.use(usersRoutes);
 app.use(authRoutes);
@@ -35,6 +37,4 @@ app.use(postRoutes);
 app.use(userRoutes);
 app.use(commentsRoutes);
 
-const server = app.listen(process.env.PORT_SERVER || 3000);
-
-module.exports = { app, server };
+module.exports = app;

@@ -1,6 +1,6 @@
 const request = require('supertest');
 const setupDatabase = require('../../test/setup-database');
-const { server } = require('../../server');
+const app = require('../../app');
 const { verify } = require('../../app/utils/jwt');
 const { User } = require('../../app/components/users');
 
@@ -8,13 +8,9 @@ const PATH = '/users';
 
 beforeEach(() => setupDatabase());
 
-afterEach(() => {
-  server.close();
-});
-
 describe(`POST: ${PATH}`, () => {
   it('should fail when missing required fields', async () => {
-    const res = await request(server)
+    const res = await request(app.listen())
       .post(PATH)
       .send({});
 
@@ -33,7 +29,7 @@ describe(`POST: ${PATH}`, () => {
       gender: 'Male',
       birthdate: '1990/05/16'
     };
-    const res = await request(server)
+    const res = await request(app.listen())
       .post(PATH)
       .send(user);
 
@@ -62,7 +58,7 @@ describe(`POST: ${PATH}`, () => {
       birthdate: '1990/05/16'
     };
     await User.create(user);
-    const res = await request(server)
+    const res = await request(app.listen())
       .post(PATH)
       .send(user);
 

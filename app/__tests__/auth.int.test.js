@@ -1,6 +1,6 @@
 const request = require('supertest');
 const setupDatabase = require('../../test/setup-database');
-const { server } = require('../../server');
+const app = require('../../app');
 const { User } = require('../../app/components/users');
 const { verify } = require('../../app/utils/jwt');
 const FB = require('../utils/fb');
@@ -27,10 +27,6 @@ beforeEach(async () => {
   await setupDatabase();
 });
 
-afterEach(() => {
-  server.close();
-});
-
 describe(`POST: ${PATH}`, () => {
   const user = {
     username: 'johndoe',
@@ -43,7 +39,7 @@ describe(`POST: ${PATH}`, () => {
   beforeEach(async () => User.create(user));
 
   it('should auth user by username', async () => {
-    const res = await request(server)
+    const res = await request(app.listen())
       .post(PATH)
       .send({ username: user.username, password: user.password });
 
@@ -59,7 +55,7 @@ describe(`POST: ${PATH}`, () => {
   });
 
   it('should auth user by email', async () => {
-    const res = await request(server)
+    const res = await request(app.listen())
       .post(PATH)
       .send({ username: user.email, password: user.password });
 
@@ -69,7 +65,7 @@ describe(`POST: ${PATH}`, () => {
   });
 
   it('should return an error when send wrong password', async () => {
-    const res = await request(server)
+    const res = await request(app.listen())
       .post(PATH)
       .send({ username: user.username, password: user.password.repeat(2) });
 
@@ -79,7 +75,7 @@ describe(`POST: ${PATH}`, () => {
   });
 
   it("should return an error when user don't exists", async () => {
-    const res = await request(server)
+    const res = await request(app.listen())
       .post(PATH)
       .send({ username: 'janedoe', password: '123456' });
 
@@ -93,7 +89,7 @@ describe(`POST: ${PATH}/facebook`, () => {
   const FACEBOOK_PATH = `${PATH}/facebook`;
 
   it('should auth user when send facebook access token', async () => {
-    const res = await request(server)
+    const res = await request(app.listen())
       .post(FACEBOOK_PATH)
       .send({ accessToken: 'fb_access_token' });
 
@@ -119,7 +115,7 @@ describe(`POST: ${PATH}/facebook`, () => {
   });
 
   it('should return error when access token without email field is provided', async () => {
-    const res = await request(server)
+    const res = await request(app.listen())
       .post(FACEBOOK_PATH)
       .send({ accessToken: 'fb_access_token' });
 
