@@ -72,7 +72,7 @@ describe(`POST: ${PATH}`, () => {
 
     expect(res.status).toEqual(401);
     expect(res.type).toEqual('application/json');
-    expect(res.body.data.error).toBeTruthy();
+    expect(res.body.error).toBeTruthy();
   });
 
   it('should fail when missing required fields', async () => {
@@ -121,7 +121,7 @@ describe(`PUT: ${PATH}/:id`, () => {
 
     expect(res.status).toEqual(401);
     expect(res.type).toEqual('application/json');
-    expect(res.body.data.error).toBeTruthy();
+    expect(res.body.error).toBeTruthy();
   });
 
   it('should return not found when trying to edit a nonexistent post', async () => {
@@ -179,7 +179,7 @@ describe(`DELETE: ${PATH}/:id`, () => {
 
     expect(res.status).toEqual(401);
     expect(res.type).toEqual('application/json');
-    expect(res.body.data.error).toBeTruthy();
+    expect(res.body.error).toBeTruthy();
   });
 
   it('should return not found when trying to delete a nonexistent post', async () => {

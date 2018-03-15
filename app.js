@@ -4,6 +4,7 @@ const cors = require('@koa/cors');
 const serve = require('koa-static');
 const helmet = require('koa-helmet');
 const compress = require('koa-compress');
+const unauthorized = require('./src/middlewares/unauthorized');
 require('dotenv').config();
 
 const app = new Koa();
@@ -12,20 +13,7 @@ app.use(bodyParser());
 app.use(cors());
 app.use(serve('public'));
 app.use(helmet());
-app.use((ctx, next) =>
-  next().catch(err => {
-    if (err.status === 401) {
-      ctx.status = 401;
-      ctx.body = {
-        data: {
-          error: 'Protected resource, use Authorization header to get access'
-        }
-      };
-    } else {
-      throw err;
-    }
-  })
-);
+app.use(unauthorized());
 
 const { routes: usersRoutes } = require('./src/components/users');
 const { routes: authRoutes } = require('./src/components/auth');

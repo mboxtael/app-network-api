@@ -33,7 +33,7 @@ describe(`POST: ${PATH_POSTS_FAVORITES}`, () => {
 
     expect(res.status).toEqual(401);
     expect(res.type).toEqual('application/json');
-    expect(res.body.data.error).toBeTruthy();
+    expect(res.body.error).toBeTruthy();
   });
 
   it('should add post to user favorites posts', async () => {

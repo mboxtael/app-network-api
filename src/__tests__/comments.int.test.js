@@ -14,7 +14,7 @@ describe(`POST: ${PATH}`, () => {
 
     expect(res.status).toEqual(401);
     expect(res.type).toEqual('application/json');
-    expect(res.body.data.error).toBeTruthy();
+    expect(res.body.error).toBeTruthy();
   });
 
   it("should create a post's comment", async () => {
