@@ -3,12 +3,9 @@
 const fse = require('fs-extra');
 const Router = require('koa-router');
 const koaBody = require('koa-body');
-const Joi = require('joi');
 const { Post: PostModel } = require('./postModel');
 const Post = require('./postDAL');
-const { validationErrors } = require('../../utils/mongoose');
 const { authenticate } = require('../../utils/jwt');
-const { joiErrors } = require('../../utils/response');
 
 const multipartBody = koaBody({
   multipart: true,
@@ -31,94 +28,61 @@ controller.get('/:id', async ctx => {
   ctx.body = { data: { post } };
 });
 
-function validate() {
-  return (ctx, next) => {
-    const schema = Joi.object().keys({
-      title: Joi.string().required(),
-      category: Joi.string().required(),
-      body: Joi.string().required(),
-      link: Joi.string().required(),
-      image: Joi.object().required(),
-      tags: Joi.string().required()
-    });
-    const { fields, files } = ctx.request.body;
-    const result = Joi.validate({ ...fields, ...files }, schema, {
-      abortEarly: false
-    });
+controller.post('/', authenticate, multipartBody, async ctx => {
+  let { fields } = ctx.request.body;
+  const { files } = ctx.request.body;
+  fields = fields || {};
+  const post = new PostModel({
+    ...fields,
+    user: ctx.state.user._id,
+    tags: fields.tags && fields.tags.split(',')
+  });
 
-    if (result.error == null) {
-      return next();
-    }
-
-    ctx.status = 422;
-    ctx.body = { error: joiErrors(result.error) };
-  };
-}
-
-controller.post('/', authenticate, multipartBody, validate(), async ctx => {
-  const { fields, files } = ctx.request.body;
-  const { image } = files;
-
-  try {
-    const post = new PostModel({
-      ...fields,
-      user: ctx.state.user._id,
-      tags: fields.tags.split(',')
-    });
+  if (files && files.image) {
+    const { image } = files;
     post.image = `images/posts/${post._id}/${image.name}`;
     await fse.copy(image.path, `public/${post.image}`);
-    await post.save();
-
-    ctx.status = 201;
-    ctx.body = { data: { post } };
-  } catch (error) {
-    ctx.status = 422;
-    ctx.body = { error: validationErrors(error) };
   }
+
+  await post.save();
+  ctx.status = 201;
+  ctx.body = { data: { post } };
 });
 
 controller.put('/:id', authenticate, multipartBody, async ctx => {
   const { fields, files } = ctx.request.body;
-  const { image } = files;
   const { id } = ctx.params;
-  try {
-    let imagePath = null;
-    if (image) {
-      imagePath = `images/posts/${id}/${image.name}`;
-      await fse.copy(image.path, `public/${imagePath}`);
-    }
-    const post = await Post.findAndUpdate(id, { ...fields, image: imagePath });
 
-    if (post == null) {
-      ctx.status = 404;
-      ctx.body = { error: 'Post not found' };
-      return;
-    }
-
-    ctx.status = 200;
-    ctx.body = { data: { post } };
-  } catch (error) {
-    ctx.status = 422;
-    ctx.body = { error: validationErrors(error) };
+  let imagePath = null;
+  if (files && files.image) {
+    const { image } = files;
+    imagePath = `images/posts/${id}/${image.name}`;
+    await fse.copy(image.path, `public/${imagePath}`);
   }
+  const post = await Post.findAndUpdate(id, { ...fields, image: imagePath });
+
+  if (post == null) {
+    ctx.status = 404;
+    ctx.body = { error: 'Post not found' };
+    return;
+  }
+
+  ctx.status = 200;
+  ctx.body = { data: { post } };
 });
 
 controller.delete('/:id', authenticate, async ctx => {
   const { id } = ctx.params;
+  const post = await Post.findAndRemove(id);
 
-  try {
-    const post = await Post.findAndRemove(id);
-
-    if (post == null) {
-      throw new Error('Post not found ');
-    }
-
-    ctx.status = 200;
-    ctx.body = { message: 'Post removed sucessfully' };
-  } catch (error) {
+  if (post == null) {
     ctx.status = 404;
-    ctx.body = { error: error.message };
+    ctx.body = { error: 'Post not found' };
+    return;
   }
+
+  ctx.status = 200;
+  ctx.body = { message: 'Post removed sucessfully' };
 });
 
 module.exports = controller;
