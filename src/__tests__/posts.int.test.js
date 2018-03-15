@@ -3,7 +3,7 @@
 const request = require('supertest');
 const setupDatabase = require('../../test/setup-database');
 const app = require('../../app');
-const { Post } = require('../../app/components/posts');
+const { Post } = require('../components/posts');
 const { User } = require('../components/users');
 
 const PATH = '/posts';

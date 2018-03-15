@@ -25,11 +25,11 @@ app.use((ctx, next) =>
   })
 );
 
-const { routes: usersRoutes } = require('./app/components/users');
-const { routes: authRoutes } = require('./app/components/auth');
-const { routes: postRoutes } = require('./app/components/posts');
-const { routes: userRoutes } = require('./app/components/user');
-const { routes: commentsRoutes } = require('./app/components/comments');
+const { routes: usersRoutes } = require('./src/components/users');
+const { routes: authRoutes } = require('./src/components/auth');
+const { routes: postRoutes } = require('./src/components/posts');
+const { routes: userRoutes } = require('./src/components/user');
+const { routes: commentsRoutes } = require('./src/components/comments');
 
 app.use(usersRoutes);
 app.use(authRoutes);
