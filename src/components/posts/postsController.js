@@ -19,28 +19,16 @@ const multipartBody = koaBody({
 const controller = new Router({ prefix: '/posts' });
 
 controller.get('/', async ctx => {
-  try {
-    const posts = await Post.all();
-
-    ctx.status = 200;
-    ctx.body = { data: { posts } };
-  } catch (error) {
-    ctx.status = 400;
-    ctx.body = { error: error.message };
-  }
+  const posts = await Post.all();
+  ctx.status = 200;
+  ctx.body = { data: { posts } };
 });
 
 controller.get('/:id', async ctx => {
   const { id } = ctx.params;
-  try {
-    const post = await Post.findAndIncViews(id);
-
-    ctx.status = 200;
-    ctx.body = { data: { post } };
-  } catch (error) {
-    ctx.status = 400;
-    ctx.body = { error: error.message };
-  }
+  const post = await Post.findAndIncViews(id);
+  ctx.status = 200;
+  ctx.body = { data: { post } };
 });
 
 function validate() {

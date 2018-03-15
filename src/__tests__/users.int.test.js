@@ -16,7 +16,7 @@ describe(`POST: ${PATH}`, () => {
 
     expect(res.status).toEqual(422);
     expect(res.type).toEqual('application/json');
-    expect(Object.keys(res.body.data.errors)).toEqual(
+    expect(Object.keys(res.body.error)).toEqual(
       expect.arrayContaining(['username', 'email'])
     );
   });
@@ -64,7 +64,7 @@ describe(`POST: ${PATH}`, () => {
 
     expect(res.status).toEqual(422);
     expect(res.type).toEqual('application/json');
-    expect(Object.keys(res.body.data.errors)).toEqual(
+    expect(Object.keys(res.body.error)).toEqual(
       expect.arrayContaining(['username', 'email'])
     );
   });

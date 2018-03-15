@@ -5,9 +5,11 @@ const serve = require('koa-static');
 const helmet = require('koa-helmet');
 const compress = require('koa-compress');
 const unauthorized = require('./src/middlewares/unauthorized');
+const errorHandler = require('./src/middlewares/error-handler');
 require('dotenv').config();
 
 const app = new Koa();
+app.use(errorHandler());
 app.use(compress());
 app.use(bodyParser());
 app.use(cors());
