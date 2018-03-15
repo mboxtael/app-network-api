@@ -3,9 +3,11 @@ const bodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
 const serve = require('koa-static');
 const helmet = require('koa-helmet');
+const compress = require('koa-compress');
 require('dotenv').config();
 
 const app = new Koa();
+app.use(compress());
 app.use(bodyParser());
 app.use(cors());
 app.use(serve('public'));
