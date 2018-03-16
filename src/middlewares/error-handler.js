@@ -1,5 +1,5 @@
 const { ValidationError } = require('mongoose').Error;
-const { validationErrors } = require('../utils/mongoose');
+const { responseErrors } = require('../utils/response');
 
 module.exports = () =>
   async function errorHandler(ctx, next) {
@@ -8,7 +8,7 @@ module.exports = () =>
     } catch (err) {
       if (err instanceof ValidationError) {
         ctx.status = 422;
-        ctx.body = { error: validationErrors(err) };
+        ctx.body = { error: responseErrors(err) };
       } else {
         ctx.status = err.statusCode || 500;
         ctx.body = err.toJSON ? err.toJSON() : { error: err.message, ...err };

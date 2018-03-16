@@ -59,7 +59,7 @@ controller.put('/:id', authenticate, multipartBody, async ctx => {
     imagePath = `images/posts/${id}/${image.name}`;
     await fse.copy(image.path, `public/${imagePath}`);
   }
-  const post = await Post.findAndUpdate(id, { ...fields, image: imagePath });
+  const post = await Post.update(id, { ...fields, image: imagePath });
 
   if (post == null) {
     ctx.status = 404;

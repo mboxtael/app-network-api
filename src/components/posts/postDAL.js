@@ -16,11 +16,7 @@ class PostDAL {
     return Post.find({});
   }
 
-  static async find(id) {
-    return Post.findById(id);
-  }
-
-  static async findAndUpdate(id, post) {
+  static async update(id, post) {
     return Post.findByIdAndUpdate(id, { $set: { ...post } }, { new: true });
   }
 
