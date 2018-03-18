@@ -10,8 +10,10 @@ module.exports = () =>
         ctx.status = 422;
         ctx.body = { error: responseErrors(err) };
       } else {
-        ctx.status = err.statusCode || 500;
-        ctx.body = err.toJSON ? err.toJSON() : { error: err.message, ...err };
+        ctx.status = err.status || 500;
+        ctx.body = err.toJSON
+          ? { error: err.toJSON() }
+          : { error: err.message, ...err };
       }
     }
   };

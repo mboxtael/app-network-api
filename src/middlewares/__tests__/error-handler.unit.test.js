@@ -20,4 +20,18 @@ describe('middleware: errorHandler', () => {
 
     expect(ctx.body.error).toBe(message);
   });
+
+  it('should set error json in response error', async () => {
+    const jsonError = { message: 'error message' };
+    const error = new Error();
+    error.status = 400;
+    error.toJSON = () => jsonError;
+    const ctx = {};
+    await errorHandler()(ctx, () => {
+      throw error;
+    });
+
+    expect(ctx.body.error).toBe(jsonError);
+    expect(ctx.status).toEqual(400);
+  });
 });
