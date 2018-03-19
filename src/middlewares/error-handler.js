@@ -11,9 +11,16 @@ module.exports = () =>
         ctx.body = { error: responseErrors(err) };
       } else {
         ctx.status = err.status || 500;
-        ctx.body = err.toJSON
-          ? { error: err.toJSON() }
-          : { error: err.message, ...err };
+
+        if (ctx.status === 401) {
+          ctx.body = {
+            error: 'Protected resource, use Authorization header to get access'
+          };
+        } else {
+          ctx.body = err.toJSON
+            ? { error: err.toJSON() }
+            : { error: err.message, ...err };
+        }
       }
     }
   };

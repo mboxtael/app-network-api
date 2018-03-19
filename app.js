@@ -4,7 +4,6 @@ const cors = require('@koa/cors');
 const serve = require('koa-static');
 const helmet = require('koa-helmet');
 const compress = require('koa-compress');
-const unauthorized = require('./src/middlewares/unauthorized');
 const errorHandler = require('./src/middlewares/error-handler');
 require('dotenv').config();
 
@@ -15,7 +14,6 @@ app.use(bodyParser());
 app.use(cors());
 app.use(serve('public'));
 app.use(helmet());
-app.use(unauthorized());
 
 const { routes: usersRoutes } = require('./src/components/users');
 const { routes: authRoutes } = require('./src/components/auth');

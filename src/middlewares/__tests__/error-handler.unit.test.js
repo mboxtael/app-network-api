@@ -36,4 +36,16 @@ describe('middleware: errorHandler', () => {
     expect(ctx.body.error).toBe(jsonError);
     expect(ctx.status).toEqual(400);
   });
+
+  it('should set unauthorized error message', async () => {
+    const error = new Error();
+    error.status = 401;
+    const ctx = {};
+    await errorHandler()(ctx, () => {
+      throw error;
+    });
+
+    expect(ctx.body.error).toEqual(expect.any(String));
+    expect(ctx.status).toEqual(401);
+  });
 });
