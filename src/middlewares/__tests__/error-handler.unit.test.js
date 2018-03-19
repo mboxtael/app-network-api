@@ -1,6 +1,8 @@
 const { ValidationError } = require('mongoose').Error;
 const errorHandler = require('../error-handler');
 
+jest.unmock('mongoose');
+
 describe('middleware: errorHandler', () => {
   it('should transform mongoose ValidationError to response error', async () => {
     const ctx = {};

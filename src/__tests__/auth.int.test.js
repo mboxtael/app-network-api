@@ -1,10 +1,11 @@
 const request = require('supertest');
-const setupDatabase = require('../../test/setup-database');
+const { prepareDB } = require('../../test/setup-database');
 const app = require('../../app');
 const { User } = require('../components/users');
 const { verify } = require('../utils/jwt');
 const FB = require('../utils/fb');
 
+jest.unmock('mongoose');
 const mockMe = jest
   .fn()
   .mockImplementationOnce(() => ({
@@ -24,7 +25,7 @@ jest.mock(
 const PATH = '/auth';
 
 beforeEach(async () => {
-  await setupDatabase();
+  await prepareDB();
 });
 
 describe(`POST: ${PATH}`, () => {

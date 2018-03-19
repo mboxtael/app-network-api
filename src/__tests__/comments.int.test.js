@@ -1,12 +1,13 @@
 const request = require('supertest');
 const app = require('../../app');
-const setupDatabase = require('../../test/setup-database');
+const { prepareDB } = require('../../test/setup-database');
 const { User } = require('../components/users');
 const { Post } = require('../components/posts');
 
+jest.unmock('mongoose');
 const PATH = '/posts/:id/comments';
 
-beforeEach(async () => setupDatabase());
+beforeEach(async () => prepareDB());
 
 describe(`POST: ${PATH}`, () => {
   it("should return an error when user isn't authenticated", async () => {

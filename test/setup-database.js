@@ -4,26 +4,31 @@ const MONGO_URI = 'mongodb://mongo/networking_test';
 const config = { connection: null };
 mongoose.Promise = Promise;
 
-async function connect() {
-  if (config.connection) {
-    return;
-  }
-
-  const mongooseOpts = {
-    autoReconnect: true,
-    reconnectTries: Number.MAX_VALUE,
-    reconnectInterval: 1000
-  };
-
-  await mongoose.connect(MONGO_URI, mongooseOpts);
-  config.connection = mongoose.connection;
-
-  mongoose.connection.on('error', async e => {
-    if (e.message.code === 'ETIMEDOUT') {
-      await mongoose.connect(MONGO_URI, mongooseOpts);
+function connect() {
+  return new Promise((resolve, reject) => {
+    if (config.connection) {
+      resolve();
+      return;
     }
 
-    throw e;
+    const mongooseOpts = {
+      autoReconnect: true,
+      reconnectTries: Number.MAX_VALUE,
+      reconnectInterval: 1000
+    };
+
+    mongoose.connect(MONGO_URI, mongooseOpts);
+    config.connection = mongoose.connection;
+
+    mongoose.connection.on('error', e => {
+      if (e.message.code === 'ETIMEDOUT') {
+        mongoose.connect(MONGO_URI, mongooseOpts);
+      } else {
+        reject(e);
+      }
+    });
+
+    mongoose.connection.once('open', resolve);
   });
 }
 
@@ -31,7 +36,10 @@ async function clear() {
   await mongoose.connection.dropDatabase();
 }
 
-module.exports = async function setupDatabase() {
-  await connect();
-  await clear();
+module.exports = {
+  config,
+  prepareDB: async () => {
+    await connect();
+    await clear();
+  },
 };

@@ -1,11 +1,12 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
 
 const request = require('supertest');
-const setupDatabase = require('../../test/setup-database');
+const { prepareDB } = require('../../test/setup-database');
 const app = require('../../app');
 const { Post } = require('../components/posts');
 const { User } = require('../components/users');
 
+jest.unmock('mongoose');
 const PATH = '/posts';
 const postExample = {
   title: 'Title post',
@@ -23,7 +24,7 @@ const userExample = {
   birthdate: '1990/05/16'
 };
 
-beforeEach(async () => setupDatabase());
+beforeEach(async () => prepareDB());
 
 describe(`GET: ${PATH}`, () => {
   it('should return an array of posts', async () => {

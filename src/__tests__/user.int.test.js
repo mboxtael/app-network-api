@@ -1,9 +1,10 @@
 const request = require('supertest');
-const setupDatabase = require('../../test/setup-database');
+const { prepareDB } = require('../../test/setup-database');
 const app = require('../../app');
 const { User } = require('../components/users');
 const { Post } = require('../components/posts');
 
+jest.unmock('mongoose');
 const PATH = '/user';
 const PATH_POSTS_FAVORITES = `${PATH}/posts/favorites`;
 const userExample = {
@@ -26,7 +27,7 @@ describe(`POST: ${PATH_POSTS_FAVORITES}`, () => {
   let user = null;
   let post = null;
 
-  beforeAll(() => setupDatabase());
+  beforeAll(() => prepareDB());
 
   it("should return an error when user isn't authenticated", async () => {
     const res = await request(app.listen()).post(PATH_POSTS_FAVORITES);

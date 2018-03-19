@@ -1,12 +1,13 @@
 const request = require('supertest');
-const setupDatabase = require('../../test/setup-database');
+const { prepareDB } = require('../../test/setup-database');
 const app = require('../../app');
 const { verify } = require('../utils/jwt');
 const { User } = require('../components/users');
 
+jest.unmock('mongoose');
 const PATH = '/users';
 
-beforeEach(() => setupDatabase());
+beforeEach(() => prepareDB());
 
 describe(`POST: ${PATH}`, () => {
   it('should fail when missing required fields', async () => {
@@ -69,4 +70,3 @@ describe(`POST: ${PATH}`, () => {
     );
   });
 });
-
