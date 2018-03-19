@@ -71,7 +71,7 @@ describe(`POST: ${PATH}`, () => {
 
     expect(res.status).toEqual(400);
     expect(res.type).toEqual('application/json');
-    expect(res.body.data.error).toEqual(expect.any(String));
+    expect(res.body.error).toEqual(expect.any(String));
   });
 
   it("should return an error when user don't exists", async () => {
@@ -81,7 +81,7 @@ describe(`POST: ${PATH}`, () => {
 
     expect(res.status).toEqual(400);
     expect(res.type).toEqual('application/json');
-    expect(res.body.data.error).toEqual(expect.any(String));
+    expect(res.body.error).toEqual(expect.any(String));
   });
 });
 
@@ -123,7 +123,7 @@ describe(`POST: ${PATH}/facebook`, () => {
     expect(mockMe).toHaveBeenCalledTimes(2);
     expect(res.status).toEqual(422);
     expect(res.type).toEqual('application/json');
-    expect(res.body.data.errors).toEqual(
+    expect(res.body.error).toEqual(
       expect.objectContaining({
         email: expect.objectContaining({
           type: expect.stringContaining('required')
