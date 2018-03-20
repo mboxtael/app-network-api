@@ -26,6 +26,7 @@
     "koa-jwt": "^3.3.0",
     "koa-router": "^7.4.0",
     "koa-static": "^4.0.2",
+    "lodash": "^4.17.5",
     "mongodb-memory-server": "^1.7.0",
     "mongoose": "^5.0.7",
     "mongoose-unique-validator": "^2.0.0",

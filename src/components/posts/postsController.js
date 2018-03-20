@@ -1,11 +1,10 @@
-/* eslint no-underscore-dangle: ["error", { "allow": ["_id"] } ] */
-
 const fse = require('fs-extra');
 const Router = require('koa-router');
 const koaBody = require('koa-body');
 const { Post: PostModel } = require('./postModel');
 const Post = require('./postDAL');
-const { authenticate } = require('../../utils/jwt');
+const User = require('../users/userDAL');
+const auth = require('../../middlewares/auth');
 
 const multipartBody = koaBody({
   multipart: true,
@@ -15,20 +14,35 @@ const multipartBody = koaBody({
 });
 const controller = new Router({ prefix: '/posts' });
 
-controller.get('/', async ctx => {
-  const posts = await Post.all();
+controller.get('/', auth({ optional: true }), async ctx => {
+  let posts = await Post.all();
+
+  if (ctx.state.user) {
+    posts = await User.verifyLikedPosts(ctx.state.user._id, posts);
+  }
+
   ctx.status = 200;
   ctx.body = { data: { posts } };
 });
 
-controller.get('/:id', async ctx => {
+controller.get('/:id', auth({ optional: true }), async ctx => {
   const { id } = ctx.params;
-  const post = await Post.findAndIncViews(id);
+  let post = await Post.findAndIncViews(id);
+
+  if (ctx.state.user) {
+    post = {
+      ...post.toJSON(),
+      liked: await User.verifyLikedPost(ctx.state.user._id, post._id)
+    };
+  }
+
   ctx.status = 200;
   ctx.body = { data: { post } };
 });
 
-controller.post('/', authenticate, multipartBody, async ctx => {
+controller.use(auth());
+
+controller.post('/', multipartBody, async ctx => {
   let { fields } = ctx.request.body;
   const { files } = ctx.request.body;
   fields = fields || {};
@@ -49,7 +63,7 @@ controller.post('/', authenticate, multipartBody, async ctx => {
   ctx.body = { data: { post } };
 });
 
-controller.put('/:id', authenticate, multipartBody, async ctx => {
+controller.put('/:id', multipartBody, async ctx => {
   const { fields, files } = ctx.request.body;
   const { id } = ctx.params;
 
@@ -71,7 +85,7 @@ controller.put('/:id', authenticate, multipartBody, async ctx => {
   ctx.body = { data: { post } };
 });
 
-controller.delete('/:id', authenticate, async ctx => {
+controller.delete('/:id', async ctx => {
   const { id } = ctx.params;
   const post = await Post.findAndRemove(id);
 

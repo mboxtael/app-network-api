@@ -1,5 +1,3 @@
-/* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
-
 const request = require('supertest');
 const { prepareDB } = require('../../test/setup-database');
 const app = require('../../app');
@@ -35,26 +33,45 @@ describe(`GET: ${PATH}`, () => {
     });
     const res = await request(app.listen()).get(PATH);
 
-    expect(res.status).toEqual(200);
-    expect(res.type).toEqual('application/json');
-    expect(res.body.data.posts).toHaveLength(1);
+    const { status, type, body } = res;
+    expect(status).toEqual(200);
+    expect(type).toEqual('application/json');
+    expect(body.data.posts).toHaveLength(1);
+  });
+
+  it('should indicate post by post if it is liked by the current user', async () => {
+    const user = await User.create(userExample);
+    const post = await Post.create({
+      ...postExample,
+      user: user._id.toString()
+    });
+    await User.likePost(user._id, post._id);
+    const res = await request(app.listen())
+      .get(PATH)
+      .set('Authorization', `Bearer ${await user.authToken()}`);
+
+    const { status, type, body } = res;
+    expect(status).toEqual(200);
+    expect(type).toEqual('application/json');
+    expect(body.data.posts).toHaveLength(1);
+    expect(body.data.posts[0].liked).toBeTruthy();
   });
 });
 
 describe(`GET: ${PATH}/:id`, () => {
   it('should return the requested post with incremented views', async () => {
     const user = await User.create(userExample);
-    const post1 = await Post.create({
+    const post = await Post.create({
       ...postExample,
       user: user._id.toString()
     });
-    const res = await request(app.listen()).get(`${PATH}/${post1._id}`);
+    const res = await request(app.listen()).get(`${PATH}/${post._id}`);
 
     expect(res.status).toEqual(200);
     expect(res.type).toEqual('application/json');
     expect(res.body.data.post).toEqual(
       expect.objectContaining({
-        _id: expect.stringContaining(post1._id.toString()),
+        _id: expect.stringMatching(post._id.toString()),
         title: expect.any(String),
         body: expect.any(String),
         tags: expect.any(Array),
@@ -62,6 +79,34 @@ describe(`GET: ${PATH}/:id`, () => {
         likes: expect.any(Number),
         views: 1,
         comments: expect.any(Array)
+      })
+    );
+  });
+
+  it('should return liked true when requested post is in users liked posts', async () => {
+    const user = await User.create(userExample);
+    const post = await Post.create({
+      ...postExample,
+      user: user._id.toString()
+    });
+    await User.likePost(user._id, post._id);
+    const res = await request(app.listen())
+      .get(`${PATH}/${post._id}`)
+      .set('Authorization', `Bearer ${await user.authToken()}`);
+
+    expect(res.status).toEqual(200);
+    expect(res.type).toEqual('application/json');
+    expect(res.body.data.post).toEqual(
+      expect.objectContaining({
+        _id: expect.stringMatching(post._id.toString()),
+        title: expect.any(String),
+        body: expect.any(String),
+        tags: expect.any(Array),
+        image: expect.any(String),
+        likes: expect.any(Number),
+        views: 1,
+        comments: expect.any(Array),
+        liked: true
       })
     );
   });
