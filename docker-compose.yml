@@ -1,12 +1,12 @@
 version: '3'
 services:
   node:
-    image: node
+    image: node:carbon
     depends_on:
       - mongo
     hostname: app
     working_dir: /usr/src/app
-    command: npm run start
+    command: yarn start
     volumes:
      - ./:/usr/src/app
     ports:

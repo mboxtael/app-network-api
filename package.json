@@ -6,24 +6,37 @@
   "author": "Garonz",
   "license": "MIT",
   "scripts": {
-    "start": "node ./node_modules/nodemon/bin/nodemon index.js",
+    "start": "node ./node_modules/nodemon/bin/nodemon ./bin/www",
     "test": "jest --runInBand"
   },
   "dependencies": {
+    "@koa/cors": "2",
     "bcrypt": "^1.0.3",
     "dotenv": "^5.0.0",
     "fb": "^2.0.0",
+    "fs-extra": "^5.0.0",
+    "joi": "^13.1.2",
     "jsonwebtoken": "^8.1.1",
     "koa": "^2.5.0",
+    "koa-body": "^2.5.0",
     "koa-bodyparser": "^4.2.0",
     "koa-bunyan-logger": "^2.0.0",
+    "koa-compress": "^2.0.0",
     "koa-helmet": "^3.3.0",
+    "koa-jwt": "^3.3.0",
     "koa-router": "^7.4.0",
+    "koa-static": "^4.0.2",
+    "lodash": "^4.17.5",
     "mongodb-memory-server": "^1.7.0",
     "mongoose": "^5.0.7",
+    "mongoose-unique-validator": "^2.0.0",
     "validator": "^9.4.1"
   },
   "devDependencies": {
+    "eslint": "^4.18.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-jest": "^21.12.2",
     "jest": "^22.4.2",
     "nodemon": "^1.15.1",
     "supertest": "^3.0.0"
