@@ -1,3 +1,5 @@
+This is a sample project built with the web framework Koa following the [best nodejs practices](https://github.com/i0natan/nodebestpractices). It includes a test suite built with Jest.
+
 ## Before start
 Make sure do you have installed `docker` and `docker-compose`. To check if they are installed run in the command line:
 ```ruby
